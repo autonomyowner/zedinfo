@@ -12,11 +12,13 @@ import type * as admin from "../admin.js";
 import type * as aiChat from "../aiChat.js";
 import type * as categories from "../categories.js";
 import type * as configurator from "../configurator.js";
+import type * as migrateImages from "../migrateImages.js";
 import type * as orders from "../orders.js";
 import type * as prebuilts from "../prebuilts.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as seedReal from "../seedReal.js";
+import type * as storage from "../storage.js";
 
 import type {
   ApiFromModules,
@@ -29,11 +31,13 @@ declare const fullApi: ApiFromModules<{
   aiChat: typeof aiChat;
   categories: typeof categories;
   configurator: typeof configurator;
+  migrateImages: typeof migrateImages;
   orders: typeof orders;
   prebuilts: typeof prebuilts;
   products: typeof products;
   seed: typeof seed;
   seedReal: typeof seedReal;
+  storage: typeof storage;
 }>;
 
 /**

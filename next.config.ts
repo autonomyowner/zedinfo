@@ -15,9 +15,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "wifidjelfa.com",
       },
+      {
+        protocol: "https",
+        hostname: "**.convex.cloud",
+      },
+      {
+        protocol: "https",
+        hostname: "**.convex.site",
+      },
     ],
-    dangerouslyAllowSVG: true,
-    unoptimized: true,
   },
   experimental: {
     optimizePackageImports: ["lucide-react"],
