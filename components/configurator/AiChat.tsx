@@ -18,11 +18,12 @@ type Props = {
   onApplyBuild: (selection: ConfigSelection) => void;
   allProducts: any[];
   locale: Locale;
+  open: boolean;
+  onClose: () => void;
 };
 
-export function AiChat({ onApplyBuild, allProducts, locale }: Props) {
+export function AiChat({ onApplyBuild, allProducts, locale, open, onClose }: Props) {
   const t = useTranslations("aiChat");
-  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -91,28 +92,16 @@ export function AiChat({ onApplyBuild, allProducts, locale }: Props) {
     onApplyBuild(sel);
   }
 
-  return (
-    <>
-      {/* Floating button */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 end-6 z-50 h-14 w-14 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition-all hover:scale-105 flex items-center justify-center"
-          aria-label={t("title")}
-        >
-          <Icon name="smart_toy" className="text-[28px]" />
-        </button>
-      )}
+  if (!open) return null;
 
-      {/* Chat panel */}
-      {open && (
+  return (
         <div className="fixed bottom-6 end-6 z-50 w-[min(400px,calc(100vw-2rem))] h-[min(520px,calc(100vh-6rem))] bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-t-2xl">
             <Icon name="smart_toy" className="text-[22px]" />
             <span className="font-bold text-sm flex-1">{t("title")}</span>
             <button
-              onClick={() => setOpen(false)}
+              onClick={onClose}
               className="hover:bg-white/20 rounded-lg p-1 transition-colors"
             >
               <Icon name="close" className="text-[20px]" />
@@ -192,7 +181,5 @@ export function AiChat({ onApplyBuild, allProducts, locale }: Props) {
             </form>
           </div>
         </div>
-      )}
-    </>
   );
 }

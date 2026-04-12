@@ -38,6 +38,7 @@ export default function ConfiguratorPage() {
   const [selection, setSelection] = useState<ConfigSelection>({});
   const [openSlot, setOpenSlot] = useState<SlotKey | null>(null);
   const [shareCode, setShareCode] = useState<string | null>(null);
+  const [aiChatOpen, setAiChatOpen] = useState(false);
 
   const allProducts = useQuery(api.products.list, {});
   const saveBuild = useMutation(api.configurator.saveBuild);
@@ -212,6 +213,13 @@ export default function ConfiguratorPage() {
                 >
                   {t("saveBuild")}
                 </Button>
+                <button
+                  onClick={() => setAiChatOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-primary to-indigo-500 text-white text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                >
+                  <Icon name="smart_toy" className="text-[18px]" />
+                  {t("aiAssistant")}
+                </button>
               </div>
 
               {shareCode && (
@@ -320,13 +328,13 @@ export default function ConfiguratorPage() {
         </div>
       </div>
 
-      {allProducts && (
-        <AiChat
-          allProducts={allProducts}
-          locale={locale}
-          onApplyBuild={(sel) => setSelection(sel)}
-        />
-      )}
+      <AiChat
+        allProducts={allProducts ?? []}
+        locale={locale}
+        onApplyBuild={(sel) => setSelection(sel)}
+        open={aiChatOpen}
+        onClose={() => setAiChatOpen(false)}
+      />
     </div>
   );
 }
