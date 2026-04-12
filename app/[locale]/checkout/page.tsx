@@ -1,0 +1,244 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "@/lib/i18n/routing";
+import { useTranslations, useLocale } from "next-intl";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useCart } from "@/lib/cart-store";
+import { Input, Textarea, Select, Label } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
+import { WILAYAS, getShippingCost } from "@/lib/wilayas";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { formatDzd } from "@/lib/format";
+import type { Locale } from "@/lib/i18n/config";
+
+const schema = z.object({
+  fullName: z.string().min(2),
+  phone: z.string().min(8),
+  wilaya: z.string().min(1),
+  address: z.string().min(5),
+  notes: z.string().optional(),
+  paymentMethod: z.enum(["cod", "whatsapp"]),
+});
+
+type FormData = z.infer<typeof schema>;
+
+export default function CheckoutPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const locale = useLocale() as Locale;
+  const router = useRouter();
+  const t = useTranslations("checkout");
+  const tc = useTranslations("common");
+
+  const items = useCart((s) => s.items);
+  const clear = useCart((s) => s.clear);
+  const subtotal = useCart((s) => s.subtotal());
+  const createOrder = useMutation(api.orders.create);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { paymentMethod: "cod" },
+  });
+
+  const wilaya = watch("wilaya");
+  const shipping = wilaya ? getShippingCost(wilaya) : 800;
+  const total = subtotal + shipping;
+
+  async function onSubmit(data: FormData) {
+    if (items.length === 0) return;
+    setSubmitting(true);
+    try {
+      const result = await createOrder({
+        items: items.map((i) => ({
+          productId: i.productId as any,
+          slug: i.slug,
+          nameFr: i.nameFr,
+          nameAr: i.nameAr,
+          priceDzd: i.priceDzd,
+          qty: i.qty,
+          image: i.image,
+        })),
+        shippingDzd: shipping,
+        customer: {
+          fullName: data.fullName,
+          phone: data.phone,
+          wilaya: data.wilaya,
+          address: data.address,
+          notes: data.notes || undefined,
+        },
+        paymentMethod: data.paymentMethod,
+        locale,
+      });
+
+      if (data.paymentMethod === "whatsapp") {
+        const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "213663287772";
+        const url = buildWhatsAppUrl({
+          phoneNumber: phone,
+          orderNumber: result.orderNumber,
+          items,
+          subtotal,
+          shipping,
+          total,
+          customer: {
+            fullName: data.fullName,
+            phone: data.phone,
+            wilaya: data.wilaya,
+            address: data.address,
+            notes: data.notes,
+          },
+          locale,
+        });
+        clear();
+        window.location.href = url;
+        return;
+      }
+
+      clear();
+      router.push(`/order/${result.id}`);
+    } catch (err) {
+      alert(tc("error"));
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (!mounted) return <div className="container-zed py-24">{tc("loading")}</div>;
+
+  if (items.length === 0) {
+    return (
+      <div className="container-zed py-24 text-center">
+        <h1 className="text-3xl font-black uppercase">{tc("error")}</h1>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container-zed py-12 lg:py-16">
+      <h1 className="text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-12">
+        {t("title")}
+      </h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="grid lg:grid-cols-3 gap-12">
+        <div className="lg:col-span-2 space-y-8">
+          <section>
+            <h2 className="text-[10px] uppercase tracking-widest font-bold mb-4 border-b border-outline-variant pb-2">
+              {t("contactInfo")}
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <Label>{t("fullName")}</Label>
+                <Input {...register("fullName")} />
+                {errors.fullName && (
+                  <p className="text-error text-xs mt-1">{errors.fullName.message}</p>
+                )}
+              </div>
+              <div>
+                <Label>{t("phone")}</Label>
+                <Input {...register("phone")} type="tel" />
+                {errors.phone && (
+                  <p className="text-error text-xs mt-1">{errors.phone.message}</p>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[10px] uppercase tracking-widest font-bold mb-4 border-b border-outline-variant pb-2">
+              {t("shippingAddress")}
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4 mt-4">
+              <div>
+                <Label>{t("wilaya")}</Label>
+                <Select {...register("wilaya")}>
+                  <option value="">—</option>
+                  {WILAYAS.map((w) => (
+                    <option key={w} value={w}>
+                      {w}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <Label>{t("address")}</Label>
+                <Input {...register("address")} />
+              </div>
+              <div className="sm:col-span-2">
+                <Label>{t("notes")}</Label>
+                <Textarea {...register("notes")} rows={3} />
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[10px] uppercase tracking-widest font-bold mb-4 border-b border-outline-variant pb-2">
+              {t("paymentMethod")}
+            </h2>
+            <div className="space-y-3 mt-4">
+              <label className="flex items-center gap-3 p-4 rounded-2xl bg-white ring-1 ring-outline-variant/60 shadow-card cursor-pointer hover:ring-primary/40 has-[:checked]:ring-2 has-[:checked]:ring-primary has-[:checked]:bg-primary-fixed/20 transition-all">
+                <input type="radio" value="cod" {...register("paymentMethod")} />
+                <Icon name="payments" className="text-primary" />
+                <span className="font-bold uppercase text-sm">{t("cod")}</span>
+              </label>
+              <label className="flex items-center gap-3 p-4 rounded-2xl bg-white ring-1 ring-outline-variant/60 shadow-card cursor-pointer hover:ring-primary/40 has-[:checked]:ring-2 has-[:checked]:ring-primary has-[:checked]:bg-primary-fixed/20 transition-all">
+                <input type="radio" value="whatsapp" {...register("paymentMethod")} />
+                <Icon name="chat" className="text-primary" />
+                <span className="font-bold uppercase text-sm">{t("whatsapp")}</span>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <div>
+          <div className="bg-white rounded-3xl shadow-card ring-1 ring-outline-variant/40 p-6 lg:p-8 sticky top-24 relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-primary-container to-primary" />
+            <h2 className="font-bold uppercase tracking-widest text-xs mb-6">
+              {tc("total")}
+            </h2>
+            <div className="space-y-3 mb-6 text-sm">
+              {items.map((i) => (
+                <div key={i.slug} className="flex justify-between">
+                  <span className="truncate pe-2">
+                    {i.nameFr} × {i.qty}
+                  </span>
+                  <span className="font-bold whitespace-nowrap">
+                    {formatDzd(i.priceDzd * i.qty, locale)}
+                  </span>
+                </div>
+              ))}
+              <div className="border-t border-outline-variant pt-3 flex justify-between">
+                <span className="text-on-surface-variant">{tc("subtotal")}</span>
+                <span className="font-bold">{formatDzd(subtotal, locale)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-on-surface-variant">{tc("shipping")}</span>
+                <span className="font-bold">{formatDzd(shipping, locale)}</span>
+              </div>
+              <div className="border-t border-outline-variant pt-3 flex justify-between">
+                <span className="font-bold uppercase">{tc("total")}</span>
+                <span className="font-black text-primary text-xl">
+                  {formatDzd(total, locale)}
+                </span>
+              </div>
+            </div>
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? tc("loading") : t("placeOrder")}
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}

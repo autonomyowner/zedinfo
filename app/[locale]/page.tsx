@@ -1,0 +1,124 @@
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/lib/i18n/routing";
+import { Button } from "@/components/ui/Button";
+import { CategoryGrid } from "@/components/home/CategoryGrid";
+import { BrandMarquee } from "@/components/home/BrandMarquee";
+
+const HERO_VIDEO = "/heroclip2.mp4";
+const HERO_POSTER = "/hero1.webp";
+
+export const revalidate = 300;
+
+type Params = { locale: string };
+
+export default async function HomePage({ params }: { params: Promise<Params> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations({ locale, namespace: "home" });
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative min-h-screen flex items-center overflow-hidden -mt-20">
+        <div className="absolute inset-0 z-0">
+          <video
+            src={HERO_VIDEO}
+            poster={HERO_POSTER}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Light overlay for text legibility only */}
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+
+        <div className="container-zed relative z-10 pt-28 sm:pt-36 md:pt-44 pb-40 sm:pb-44 md:pb-56">
+          <div className="max-w-2xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] mb-5 sm:mb-6 text-white">
+              {t("heroTitle1")}{" "}
+              {t("heroTitle2") && <>{t("heroTitle2")}{" "}</>}
+              {t("heroTitle3")}
+            </h1>
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-300 max-w-xl mb-8 sm:mb-10 leading-relaxed">
+              {t("heroTagline")}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/shop">
+                <Button size="sm">
+                  {t("shopNow")} <span className="ms-2">&rarr;</span>
+                </Button>
+              </Link>
+              <Link href="/configurator">
+                <Button size="sm" variant="outline" className="border-white/60 text-white hover:bg-white hover:text-primary">
+                  {t("buildMyPc")}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom fade into next section */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-surface-container-low" />
+      </section>
+
+      {/* Trusted Brands marquee — sits over the hero→categories fade */}
+      <BrandMarquee heading={t("trustedBrands")} />
+
+      {/* Shop by Category */}
+      <section className="bg-surface-container-low py-16 lg:py-24">
+        <div className="container-zed">
+          <h2 className="text-3xl lg:text-5xl font-black tracking-tighter uppercase mb-10 lg:mb-14 text-center">
+            Shop by Category
+          </h2>
+          <CategoryGrid />
+        </div>
+      </section>
+
+      {/* Build Your Dream PC */}
+      <section className="bg-surface-container-low py-16 lg:py-24">
+        <div className="container-zed">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 shadow-card ring-1 ring-outline-variant/40">
+            <div className="grid md:grid-cols-2 items-center">
+              {/* Text + CTA */}
+              <div className="p-8 sm:p-10 lg:p-14 order-2 md:order-1">
+                <span className="inline-block text-xs font-bold uppercase tracking-widest text-white/70 mb-3">
+                  PC Configurator
+                </span>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] text-white mb-4">
+                  {t("buildDreamTitle") ?? "Build Your Dream PC"}
+                </h2>
+                <p className="text-sm sm:text-base text-white/80 max-w-md mb-8 leading-relaxed">
+                  {t("buildDreamDesc") ?? "Choose your components, build your perfect gaming or work setup. Our PC builder makes it easy to pick compatible parts and see the total price."}
+                </p>
+                <Link href="/configurator">
+                  <Button size="sm" className="bg-white text-gray-900 hover:bg-white/90 shadow-lg">
+                    {t("startBuilding") ?? "Start Building"} <span className="ms-2">&rarr;</span>
+                  </Button>
+                </Link>
+              </div>
+
+              {/* GIF side */}
+              <div className="relative order-1 md:order-2 h-64 md:h-full min-h-[320px]">
+                <img
+                  src="/build-pc.gif"
+                  alt="Gaming PC build"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-900/80 via-gray-900/30 to-transparent md:block hidden" />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/30 to-transparent md:hidden" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </>
+  );
+}
