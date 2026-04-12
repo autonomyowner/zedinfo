@@ -32,11 +32,13 @@ export function MobileNav() {
   return (
     <>
       <button
-        className="lg:hidden p-2 -ms-2 text-slate-700 hover:text-primary transition-colors"
+        className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors"
         onClick={() => setOpen(true)}
         aria-label="Menu"
       >
-        <Icon name="menu" className="text-[28px]" />
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
+        </svg>
       </button>
 
       {/* Backdrop */}
