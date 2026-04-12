@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/routing";
 import { LocaleSwitcher } from "./LocaleSwitcher";
@@ -31,10 +32,13 @@ export async function Header({ locale }: { locale: Locale }) {
             dir="ltr"
             className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <span className="font-bold text-xl text-gray-900">ZED</span>
-            <span className="hidden sm:inline font-bold text-primary text-[10px] tracking-widest uppercase">
-              Informatique
-            </span>
+            <Image
+              src="/logo.jpg"
+              alt="ZED INFORMATIQUE"
+              width={40}
+              height={40}
+              className="rounded-full ring-2 ring-primary/20"
+            />
           </Link>
         </div>
 
