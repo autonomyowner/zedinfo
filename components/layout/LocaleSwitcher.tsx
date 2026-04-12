@@ -11,7 +11,7 @@ export function LocaleSwitcher() {
   const current = (params.locale as Locale) ?? "fr";
 
   const other: Locale = current === "fr" ? "ar" : "fr";
-  const label = other === "fr" ? "FR" : "AR";
+  const label = other === "fr" ? "FR" : "عربي";
 
   const onChange = () => {
     router.replace(pathname, { locale: other });
