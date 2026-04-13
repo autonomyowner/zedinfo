@@ -176,11 +176,11 @@ export default function CheckoutPage() {
 
   return (
     <div className="container-zed py-6 sm:py-12 lg:py-16">
-      <h1 className="text-2xl sm:text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-6 sm:mb-12">
+      <h1 className="text-xl sm:text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-4 sm:mb-12">
         {t("title")}
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid lg:grid-cols-3 gap-6 sm:gap-12">
-        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid lg:grid-cols-3 gap-4 sm:gap-12">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-8">
           <section>
             <h2 className="text-[10px] uppercase tracking-widest font-bold mb-4 border-b border-outline-variant pb-2">
               {t("contactInfo")}
@@ -264,15 +264,15 @@ export default function CheckoutPage() {
         </div>
 
         <div>
-          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-card ring-1 ring-outline-variant/40 p-4 sm:p-6 lg:p-8 sticky top-24 relative overflow-hidden">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-card ring-1 ring-outline-variant/40 p-3 sm:p-6 lg:p-8 sticky top-24 relative overflow-hidden">
             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-primary-container to-primary" />
             <h2 className="font-bold uppercase tracking-widest text-xs mb-6">
               {tc("total")}
             </h2>
-            <div className="space-y-3 mb-6 text-sm">
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-xs sm:text-sm">
               {items.map((i) => (
                 <div key={i.slug} className="flex justify-between gap-2 min-w-0">
-                  <span className="truncate min-w-0">
+                  <span className="truncate min-w-0 max-w-[55%]">
                     {i.nameFr} × {i.qty}
                   </span>
                   <span className="font-bold whitespace-nowrap shrink-0">
@@ -290,7 +290,7 @@ export default function CheckoutPage() {
               </div>
               <div className="border-t border-outline-variant pt-3 flex justify-between">
                 <span className="font-bold uppercase">{tc("total")}</span>
-                <span className="font-black text-primary text-xl">
+                <span className="font-black text-primary text-base sm:text-xl">
                   {formatDzd(total, locale)}
                 </span>
               </div>
