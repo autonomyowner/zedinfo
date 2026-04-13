@@ -141,7 +141,7 @@ export default function CheckoutPage() {
             address: data.address || "",
             notes: data.notes || "",
           },
-          locale,
+          locale: locale as "ar" | "fr",
         });
         setSubmitted(true);
         clear();
