@@ -104,7 +104,16 @@
     "brand": "العلامة التجارية",
     "availability": "التوفر",
     "results": "{count} نتيجة",
-    "noResults": "لم يتم العثور على منتجات"
+    "noResults": "لم يتم العثور على منتجات",
+    "allProducts": "جميع المنتجات",
+    "clearFilters": "مسح الفلاتر",
+    "loadMore": "تحميل المزيد",
+    "inStockOnly": "متوفر فقط",
+    "minPrice": "السعر الأدنى",
+    "maxPrice": "السعر الأقصى",
+    "showing": "{count} منتج معروض",
+    "categories": "الفئات",
+    "sortByLabel": "ترتيب حسب"
   },
   "product": {
     "description": "الوصف",

@@ -104,7 +104,16 @@
     "brand": "Marque",
     "availability": "Disponibilité",
     "results": "{count} résultats",
-    "noResults": "Aucun produit trouvé"
+    "noResults": "Aucun produit trouvé",
+    "allProducts": "Tous les produits",
+    "clearFilters": "Effacer les filtres",
+    "loadMore": "Charger plus",
+    "inStockOnly": "En stock uniquement",
+    "minPrice": "Prix min",
+    "maxPrice": "Prix max",
+    "showing": "{count} produits affichés",
+    "categories": "Catégories",
+    "sortByLabel": "Trier par"
   },
   "product": {
     "description": "Description",

@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 
 export const list = query({
   args: {
@@ -28,6 +29,22 @@ export const list = query({
       products = await ctx.db.query("products").collect();
     }
     return limit ? products.slice(0, limit) : products;
+  },
+});
+
+export const listPaginated = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+    categoryId: v.optional(v.id("categories")),
+  },
+  handler: async (ctx, args) => {
+    if (args.categoryId) {
+      return await ctx.db
+        .query("products")
+        .withIndex("by_category", (q) => q.eq("categoryId", args.categoryId!))
+        .paginate(args.paginationOpts);
+    }
+    return await ctx.db.query("products").paginate(args.paginationOpts);
   },
 });
 
