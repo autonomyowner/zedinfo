@@ -21,8 +21,8 @@ const schema = z.object({
   fullName: z.string().min(2),
   phone: z.string().min(8),
   wilaya: z.string().min(1),
-  commune: z.string().min(1),
-  address: z.string().min(5),
+  commune: z.string().optional(),
+  address: z.string().optional(),
   notes: z.string().optional(),
   paymentMethod: z.enum(["cod", "whatsapp"]),
 });

@@ -51,7 +51,6 @@ export async function Footer({ locale }: { locale: Locale }) {
               <li><Link href="/configurator" className="text-gray-600 hover:text-primary transition-colors">{tn("buildPc")}</Link></li>
               <li><Link href="/track-order" className="text-gray-600 hover:text-primary transition-colors">{tn("trackOrder")}</Link></li>
               <li><Link href="/support" className="text-gray-600 hover:text-primary transition-colors">{tn("services")}</Link></li>
-              <li><Link href="/about" className="text-gray-600 hover:text-primary transition-colors">{tn("about")}</Link></li>
               <li><Link href="/contact" className="text-gray-600 hover:text-primary transition-colors">{tn("contact")}</Link></li>
             </ul>
           </div>
