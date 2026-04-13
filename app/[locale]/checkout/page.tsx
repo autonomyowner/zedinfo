@@ -6,13 +6,13 @@ import { useTranslations, useLocale } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useCart } from "@/lib/cart-store";
 import { Input, Textarea, Select, Label } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { WILAYAS_BILINGUAL, getCommunesForWilaya, getShippingCost } from "@/lib/wilayas";
+import { WILAYAS_BILINGUAL, getCommunesForWilaya, getShippingCost, getWilayaNumber } from "@/lib/wilayas";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatDzd } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
@@ -41,8 +41,12 @@ export default function CheckoutPage() {
   const clear = useCart((s) => s.clear);
   const subtotal = useCart((s) => s.subtotal());
   const createOrder = useMutation(api.orders.create);
+  const enabledCarriers = useQuery(api.delivery.getEnabledCarriers);
+  const getCarrierFees = useAction(api.delivery.getFees);
 
   const [submitting, setSubmitting] = useState(false);
+  const [dynamicShipping, setDynamicShipping] = useState<number | null>(null);
+  const [fetchingFees, setFetchingFees] = useState(false);
 
   const {
     register,
@@ -58,11 +62,38 @@ export default function CheckoutPage() {
   const wilaya = watch("wilaya");
   const communes = wilaya ? getCommunesForWilaya(wilaya) : [];
 
-  // Reset commune when wilaya changes
+  // Reset commune when wilaya changes, and try to fetch real shipping fees
   useEffect(() => {
     setValue("commune", "");
-  }, [wilaya, setValue]);
-  const shipping = wilaya ? getShippingCost(wilaya) : 800;
+    setDynamicShipping(null);
+
+    if (!wilaya) return;
+    const defaultCarrier = (enabledCarriers ?? []).find((c: any) => c.isDefault && c.hasApi && c.credentials);
+    if (!defaultCarrier) return;
+
+    const wilayaNum = getWilayaNumber(wilaya);
+    if (wilayaNum === 0) return;
+
+    let cancelled = false;
+    setFetchingFees(true);
+    getCarrierFees({
+      slug: defaultCarrier.slug,
+      credentials: defaultCarrier.credentials!,
+      fromWilaya: 17, // Djelfa (store location)
+      toWilaya: wilayaNum,
+    }).then((result: any) => {
+      if (!cancelled && result.fee > 0) {
+        setDynamicShipping(result.fee);
+      }
+    }).catch(() => {}).finally(() => {
+      if (!cancelled) setFetchingFees(false);
+    });
+
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wilaya, enabledCarriers]);
+
+  const shipping = dynamicShipping ?? (wilaya ? getShippingCost(wilaya) : 800);
   const total = subtotal + shipping;
 
   async function onSubmit(data: FormData) {

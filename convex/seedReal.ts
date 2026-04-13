@@ -847,24 +847,7 @@ const PRODUCTS: ProductSeed[] = [
     images: ["https://wifidjelfa.com/wp-content/uploads/2026/01/101706070455484466.jpg"],
     featured: false,
     specs: { type: "cooler", socket: ["LGA1700", "LGA1851", "AM5", "AM4"], heightMm: 27, tdpSupport: 300 },
-  },
-
-  // ============ LAPTOPS ============
-  {
-    slug: "hp-laptop-15-i5-1334u",
-    categorySlug: "laptops",
-    brand: "HP",
-    nameFr: "HP Laptop 15 Intel Core i5-1334U 8GB 512GB SSD",
-    nameAr: "HP Laptop 15 Intel Core i5 8GB 512GB",
-    descFr: "Laptop HP 15 pouces avec Intel Core i5-1334U, 8 Go RAM DDR4, SSD 512 Go.",
-    descAr: "لابتوب HP 15 بوصة مع Intel Core i5-1334U، 8 جيجابايت RAM DDR4، SSD 512 جيجابايت.",
-    priceDzd: 132500,
-    stock: 5,
-    images: ["https://wifidjelfa.com/wp-content/uploads/woocommerce-placeholder-350x350.png"],
-    featured: true,
-    specs: { type: "other", display: "15.6\" FHD" },
-  },
-];
+  },];
 
 export default mutation({
   args: {},

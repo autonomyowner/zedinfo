@@ -9,3 +9,9 @@ export function getShippingCost(_wilaya: string): number {
   // Flat rate for now; admin can replace later
   return 800;
 }
+
+/** Get 1-based wilaya number from French name (index in WILAYAS_BILINGUAL + 1) */
+export function getWilayaNumber(wilayaFr: string): number {
+  const idx = WILAYAS_BILINGUAL.findIndex((w) => w.fr === wilayaFr);
+  return idx >= 0 ? idx + 1 : 0;
+}

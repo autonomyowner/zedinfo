@@ -10,8 +10,15 @@
 
 import type * as admin from "../admin.js";
 import type * as aiChat from "../aiChat.js";
+import type * as carriers_ecotrack from "../carriers/ecotrack.js";
+import type * as carriers_index from "../carriers/index.js";
+import type * as carriers_maystro from "../carriers/maystro.js";
+import type * as carriers_types from "../carriers/types.js";
+import type * as carriers_yalidine from "../carriers/yalidine.js";
+import type * as carriers_zrExpress from "../carriers/zrExpress.js";
 import type * as categories from "../categories.js";
 import type * as configurator from "../configurator.js";
+import type * as delivery from "../delivery.js";
 import type * as migrateImages from "../migrateImages.js";
 import type * as orders from "../orders.js";
 import type * as prebuilts from "../prebuilts.js";
@@ -29,8 +36,15 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   aiChat: typeof aiChat;
+  "carriers/ecotrack": typeof carriers_ecotrack;
+  "carriers/index": typeof carriers_index;
+  "carriers/maystro": typeof carriers_maystro;
+  "carriers/types": typeof carriers_types;
+  "carriers/yalidine": typeof carriers_yalidine;
+  "carriers/zrExpress": typeof carriers_zrExpress;
   categories: typeof categories;
   configurator: typeof configurator;
+  delivery: typeof delivery;
   migrateImages: typeof migrateImages;
   orders: typeof orders;
   prebuilts: typeof prebuilts;

@@ -105,6 +105,21 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_createdAt", ["createdAt"]),
 
+  deliveryCarriers: defineTable({
+    slug: v.string(),
+    name: v.string(),
+    enabled: v.boolean(),
+    credentials: v.optional(v.object({
+      apiId: v.optional(v.string()),
+      apiToken: v.optional(v.string()),
+      bearerToken: v.optional(v.string()),
+    })),
+    isDefault: v.boolean(),
+    hasApi: v.boolean(),
+    verified: v.optional(v.boolean()),
+    createdAt: v.number(),
+  }).index("by_slug", ["slug"]),
+
   savedBuilds: defineTable({
     shareCode: v.string(),
     componentIds: v.array(v.id("products")),

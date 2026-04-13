@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/i18n/routing";
+import { Link, useRouter } from "@/lib/i18n/routing";
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/Icon";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
   const t = useTranslations("nav");
   const tc = useTranslations("common");
 
@@ -76,17 +78,29 @@ export function MobileNav() {
           </div>
 
           {/* Search */}
-          <label className="mt-5 flex items-center gap-3 w-full rounded-full bg-white/15 backdrop-blur ring-1 ring-white/20 px-4 py-3 focus-within:bg-white/25 focus-within:ring-white/40 transition-all cursor-text">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (searchQuery.trim()) {
+                router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+                setOpen(false);
+                setSearchQuery("");
+              }
+            }}
+            className="mt-5 flex items-center gap-3 w-full rounded-full bg-white/15 backdrop-blur ring-1 ring-white/20 px-4 py-3 focus-within:bg-white/25 focus-within:ring-white/40 transition-all cursor-text"
+          >
             <Icon
               name="search"
               className="text-white/70 text-[20px] shrink-0 leading-none"
             />
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={tc("search")}
               className="flex-1 min-w-0 bg-transparent text-sm text-white placeholder:text-white/60 focus:outline-none border-none p-0"
             />
-          </label>
+          </form>
         </div>
 
         {/* Links */}

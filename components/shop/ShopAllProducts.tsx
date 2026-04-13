@@ -6,6 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { ProductCard } from "./ProductCard";
 import { Icon } from "@/components/ui/Icon";
 import { formatDzd } from "@/lib/format";
+import { useSearchParams } from "next/navigation";
 import type { Locale } from "@/lib/i18n/config";
 import type { Id } from "@/convex/_generated/dataModel";
 
@@ -35,10 +36,15 @@ type Translations = {
 export function ShopAllProducts({
   locale,
   t,
+  initialSearch,
 }: {
   locale: Locale;
   t: Translations;
+  initialSearch?: string;
 }) {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("q") || initialSearch || "";
+
   const [selectedCategory, setSelectedCategory] = useState<
     Id<"categories"> | undefined
   >(undefined);
@@ -50,15 +56,24 @@ export function ShopAllProducts({
 
   const categories = useQuery(api.categories.list, {});
 
+  // When searching, use the search API; otherwise use paginated list
+  const searchResults = useQuery(
+    api.products.search,
+    searchQuery ? { q: searchQuery } : "skip"
+  );
+
   const { results, status, loadMore } = usePaginatedQuery(
     api.products.listPaginated,
-    selectedCategory ? { categoryId: selectedCategory } : {},
+    searchQuery ? "skip" : (selectedCategory ? { categoryId: selectedCategory } : {}),
     { initialNumItems: 30 }
   );
 
+  const isSearching = !!searchQuery;
+  const baseResults = isSearching ? searchResults : results;
+
   // Client-side filtering & sorting
   const filtered = useMemo(() => {
-    let items = results ?? [];
+    let items = baseResults ?? [];
 
     if (inStockOnly) {
       items = items.filter((p) => p.stock > 0);
@@ -78,10 +93,10 @@ export function ShopAllProducts({
     else sorted.sort((a, b) => b.createdAt - a.createdAt);
 
     return sorted;
-  }, [results, inStockOnly, minPrice, maxPrice, sort]);
+  }, [baseResults, inStockOnly, minPrice, maxPrice, sort]);
 
   const hasActiveFilters =
-    !!selectedCategory || inStockOnly || !!minPrice || !!maxPrice;
+    !!selectedCategory || inStockOnly || !!minPrice || !!maxPrice || isSearching;
 
   function clearFilters() {
     setSelectedCategory(undefined);
@@ -198,6 +213,17 @@ export function ShopAllProducts({
       {/* Active filter chips */}
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2 mb-6">
+          {isSearching && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
+              &ldquo;{searchQuery}&rdquo;
+              <a
+                href={`/${locale}/shop`}
+                className="hover:text-primary/70"
+              >
+                <Icon name="close" className="text-sm" />
+              </a>
+            </span>
+          )}
           {selectedCategoryName && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
               {locale === "ar"
@@ -274,7 +300,7 @@ export function ShopAllProducts({
           </div>
 
           {/* Product grid */}
-          {filtered.length === 0 && status !== "LoadingFirstPage" ? (
+          {filtered.length === 0 && (isSearching ? searchResults !== undefined : status !== "LoadingFirstPage") ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <Icon
                 name="search_off"
@@ -284,7 +310,7 @@ export function ShopAllProducts({
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-              {status === "LoadingFirstPage"
+              {(isSearching ? searchResults === undefined : status === "LoadingFirstPage")
                 ? Array.from({ length: 8 }).map((_, i) => (
                     <div
                       key={i}
@@ -304,7 +330,7 @@ export function ShopAllProducts({
           )}
 
           {/* Load more */}
-          {status === "CanLoadMore" && (
+          {!isSearching && status === "CanLoadMore" && (
             <div className="flex justify-center mt-10">
               <button
                 onClick={() => loadMore(30)}
@@ -316,7 +342,7 @@ export function ShopAllProducts({
             </div>
           )}
 
-          {status === "LoadingMore" && (
+          {!isSearching && status === "LoadingMore" && (
             <div className="flex justify-center mt-10">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
             </div>

@@ -2,21 +2,22 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatDzd, formatDateTime } from "@/lib/format";
 import { Badge } from "@/components/ui/Badge";
 import { Select } from "@/components/ui/Input";
 
 const STATUSES = ["pending", "confirmed", "preparing", "shipping", "delivered", "cancelled"] as const;
-const CARRIERS = ["yalidine", "ems", "zr_express", "custom"] as const;
 
 export default function AdminOrderDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const order = useQuery(api.orders.byId, { id: id as any });
+  const enabledCarriers = useQuery(api.delivery.getEnabledCarriers);
   const updateStatus = useMutation(api.orders.updateStatus);
   const updateTracking = useMutation(api.orders.updateTracking);
+  const createShipment = useAction(api.delivery.createShipment);
 
   const [statusNote, setStatusNote] = useState("");
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -24,6 +25,8 @@ export default function AdminOrderDetailPage() {
   const [carrierTrackingUrl, setCarrierTrackingUrl] = useState("");
   const [estimatedDelivery, setEstimatedDelivery] = useState("");
   const [trackingInited, setTrackingInited] = useState(false);
+  const [creatingShipment, setCreatingShipment] = useState(false);
+  const [shipmentError, setShipmentError] = useState("");
 
   if (!order) return <div className="p-8">Loading...</div>;
 
@@ -121,9 +124,10 @@ export default function AdminOrderDetailPage() {
                   className="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
                 >
                   <option value="">Select carrier</option>
-                  {CARRIERS.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                  {(enabledCarriers ?? []).map((c: any) => (
+                    <option key={c.slug} value={c.slug}>{c.name}</option>
                   ))}
+                  <option value="custom">Custom</option>
                 </select>
               </div>
               <div>
@@ -160,12 +164,61 @@ export default function AdminOrderDetailPage() {
                 />
               </div>
             </div>
-            <button
-              onClick={handleTrackingSave}
-              className="mt-4 rounded-xl bg-primary text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all"
-            >
-              Save Tracking
-            </button>
+            <div className="flex gap-3 mt-4 flex-wrap">
+              <button
+                onClick={handleTrackingSave}
+                className="rounded-xl bg-primary text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all"
+              >
+                Save Tracking
+              </button>
+              {(() => {
+                const selectedCarrier = (enabledCarriers ?? []).find((c: any) => c.slug === carrier);
+                if (!selectedCarrier?.hasApi || !selectedCarrier?.credentials) return null;
+                return (
+                  <button
+                    type="button"
+                    disabled={creatingShipment}
+                    onClick={async () => {
+                      setCreatingShipment(true);
+                      setShipmentError("");
+                      try {
+                        const result = await createShipment({
+                          slug: selectedCarrier.slug,
+                          credentials: selectedCarrier.credentials!,
+                          shipment: {
+                            orderNumber: order.orderNumber,
+                            customerName: order.customer.fullName,
+                            phone: order.customer.phone,
+                            address: order.customer.address,
+                            wilaya: order.customer.wilaya,
+                            commune: order.customer.commune || undefined,
+                            totalAmount: order.totalDzd,
+                            isCod: order.paymentMethod === "cod",
+                          },
+                        });
+                        if (result.error) {
+                          setShipmentError(result.error);
+                        } else {
+                          setTrackingNumber(result.tracking);
+                          setCarrierTrackingUrl("trackingUrl" in result ? (result.trackingUrl ?? "") : "");
+                        }
+                      } catch (e: any) {
+                        setShipmentError(e.message);
+                      }
+                      setCreatingShipment(false);
+                    }}
+                    className="rounded-xl bg-green-600 text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                  >
+                    {creatingShipment ? "Creating..." : "Create Shipment"}
+                  </button>
+                );
+              })()}
+            </div>
+            {shipmentError && (
+              <div className="mt-3 rounded-xl bg-red-50 text-red-800 text-xs p-3">
+                {shipmentError}
+              </div>
+            )}
           </div>
         </div>
 
