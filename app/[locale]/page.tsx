@@ -3,6 +3,8 @@ import { Link } from "@/lib/i18n/routing";
 import { Button } from "@/components/ui/Button";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { BrandMarquee } from "@/components/home/BrandMarquee";
+import { FeaturedProducts } from "@/components/home/FeaturedProducts";
+import { PromoSection } from "@/components/home/PromoSection";
 
 const HERO_VIDEO = "/heroclip2.mp4";
 const HERO_POSTER = "/hero1.webp";
@@ -16,6 +18,7 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
   setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: "home" });
+  const tc = await getTranslations({ locale, namespace: "common" });
 
   return (
     <>
@@ -118,6 +121,25 @@ export default async function HomePage({ params }: { params: Promise<Params> }) 
           </div>
         </div>
       </section>
+
+      {/* Featured Products */}
+      <FeaturedProducts
+        locale={locale as "fr" | "ar"}
+        title={t("featuredTitle")}
+        subtitle={t("featuredSubtitle")}
+        inStockLabel={tc("inStock")}
+        addLabel={tc("addToCart")}
+      />
+
+      {/* Promo Products */}
+      <PromoSection
+        locale={locale as "fr" | "ar"}
+        eyebrow={t("promoEyebrow")}
+        title={t("promoTitle")}
+        subtitle={t("promoSubtitle")}
+        addLabel={tc("addToCart")}
+        promoLabel={t("promoLabel")}
+      />
 
     </>
   );

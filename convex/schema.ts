@@ -22,6 +22,7 @@ export default defineSchema({
     stock: v.number(),
     images: v.array(v.string()),
     featured: v.boolean(),
+    comparePriceDzd: v.optional(v.number()),
     specs: v.any(), // Typed spec blob handled at app layer
     createdAt: v.number(),
   })

@@ -48,6 +48,17 @@ export const listPaginated = query({
   },
 });
 
+export const listPromo = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, { limit }) => {
+    const all = await ctx.db.query("products").collect();
+    const promo = all.filter(
+      (p) => p.comparePriceDzd !== undefined && p.comparePriceDzd > p.priceDzd
+    );
+    return limit ? promo.slice(0, limit) : promo;
+  },
+});
+
 export const bySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, { slug }) => {

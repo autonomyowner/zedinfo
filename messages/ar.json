@@ -65,7 +65,9 @@
     "promoEyebrow": "عروض حصرية",
     "promoTitle": "في تخفيض",
     "promoSubtitle": "مجموعة مختارة من العروض المحدودة على أفضل المكونات وملحقات الألعاب.",
-    "promoLabel": "تخفيض"
+    "promoLabel": "تخفيض",
+    "featuredTitle": "منتجات مميزة",
+    "featuredSubtitle": "مجموعتنا المختارة من أفضل المكونات والمعدات."
   },
   "categories": {
     "laptops": "أجهزة الكمبيوتر المحمولة",
