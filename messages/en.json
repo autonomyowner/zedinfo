@@ -43,7 +43,8 @@
     "products": "Products",
     "buildPc": "Build a PC",
     "contact": "Contact",
-    "trackOrder": "Track order"
+    "trackOrder": "Track order",
+    "fpsEstimator": "FPS Estimator"
   },
   "home": {
     "heroEyebrow": "ZED INFORMATIQUE",
@@ -231,6 +232,25 @@
     "apply": "Apply this config",
     "send": "Send",
     "error": "Sorry, an error occurred. Please try again."
+  },
+  "fpsEstimator": {
+    "badge": "Free tool",
+    "title": "Estimate Your FPS",
+    "subtitle": "Enter your CPU and GPU — even hardware we don't sell — and get an AI-estimated FPS for your favorite games.",
+    "cpuLabel": "Processor",
+    "gpuLabel": "Graphics card",
+    "ramLabel": "RAM (optional)",
+    "cpuPlaceholder": "E.g.: i5-12400F, Ryzen 5 5600X",
+    "gpuPlaceholder": "E.g.: RTX 3060, RX 6700 XT",
+    "ramPlaceholder": "E.g.: 16 GB DDR4 3200",
+    "needCpuGpu": "Please enter a CPU and GPU",
+    "resolution": "Resolution",
+    "selectGame": "Choose a game",
+    "customGame": "Other game...",
+    "estimate": "Estimate",
+    "estimating": "Estimating...",
+    "fpsLabel": "Estimated FPS",
+    "confidence": "Confidence"
   },
   "footer": {
     "tagline": "High-performance computing solutions engineered for precision, stability, and extreme reliability. Trusted by professionals across Algeria.",
