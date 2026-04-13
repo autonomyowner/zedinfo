@@ -175,7 +175,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container-zed py-6 sm:py-12 lg:py-16 overflow-x-hidden">
+    <div className="container-zed py-6 sm:py-12 lg:py-16">
       <h1 className="text-2xl sm:text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-6 sm:mb-12">
         {t("title")}
       </h1>
@@ -271,11 +271,11 @@ export default function CheckoutPage() {
             </h2>
             <div className="space-y-3 mb-6 text-sm">
               {items.map((i) => (
-                <div key={i.slug} className="flex justify-between">
-                  <span className="truncate pe-2">
+                <div key={i.slug} className="flex justify-between gap-2 min-w-0">
+                  <span className="truncate min-w-0">
                     {i.nameFr} × {i.qty}
                   </span>
-                  <span className="font-bold whitespace-nowrap">
+                  <span className="font-bold whitespace-nowrap shrink-0">
                     {formatDzd(i.priceDzd * i.qty, locale)}
                   </span>
                 </div>

@@ -66,7 +66,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={loc} messages={messages}>
           <ConvexClientProvider>
             <Header locale={loc} />
-            <main className="flex-1 pt-20 overflow-x-hidden">{children}</main>
+            <main className="flex-1 pt-20">{children}</main>
             <Footer locale={loc} />
             {/* WhatsApp floating button */}
             <a
