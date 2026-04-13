@@ -45,6 +45,7 @@ export default function CheckoutPage() {
   const getCarrierFees = useAction(api.delivery.getFees);
 
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [dynamicShipping, setDynamicShipping] = useState<number | null>(null);
   const [fetchingFees, setFetchingFees] = useState(false);
 
@@ -142,11 +143,13 @@ export default function CheckoutPage() {
           },
           locale,
         });
+        setSubmitted(true);
         clear();
         window.location.href = url;
         return;
       }
 
+      setSubmitted(true);
       clear();
       router.push(`/order/${result.id}`);
     } catch (err) {
@@ -159,12 +162,16 @@ export default function CheckoutPage() {
 
   if (!mounted) return <div className="container-zed py-24">{tc("loading")}</div>;
 
-  if (items.length === 0) {
+  if (items.length === 0 && !submitted) {
     return (
       <div className="container-zed py-24 text-center">
         <h1 className="text-3xl font-black uppercase">{tc("error")}</h1>
       </div>
     );
+  }
+
+  if (submitted) {
+    return <div className="container-zed py-24 text-center">{tc("loading")}</div>;
   }
 
   return (

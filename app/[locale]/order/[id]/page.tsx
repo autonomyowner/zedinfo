@@ -18,6 +18,7 @@ export default function OrderConfirmationPage() {
   const locale = useLocale() as Locale;
   const t = useTranslations("checkout");
   const tc = useTranslations("common");
+  const tt = useTranslations("tracking");
 
   const order = useQuery(api.orders.byId, id ? ({ id: id as any }) : "skip");
 
@@ -45,12 +46,15 @@ export default function OrderConfirmationPage() {
           <h1 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase">
             {t("orderSuccess")}
           </h1>
+          <p className="text-on-surface-variant mt-2 text-lg">
+            {t("thankYouMessage")}
+          </p>
           <p className="text-on-surface-variant mt-4">
             {t("orderNumber")}:{" "}
             <span className="font-mono font-bold text-primary">{order.orderNumber}</span>
           </p>
           <div className="mt-4">
-            <Badge variant={statusVariant[order.status]}>{order.status}</Badge>
+            <Badge variant={statusVariant[order.status]}>{tt(order.status)}</Badge>
           </div>
         </div>
 

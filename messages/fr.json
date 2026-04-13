@@ -150,6 +150,7 @@
     "whatsapp": "Commander via WhatsApp",
     "placeOrder": "Confirmer la commande",
     "orderSuccess": "Commande confirmée",
+    "thankYouMessage": "Merci pour votre achat ! Votre commande a été enregistrée avec succès. Nous vous contacterons bientôt.",
     "orderNumber": "Numéro de commande"
   },
   "configurator": {
