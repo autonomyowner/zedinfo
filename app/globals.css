@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 @layer base {
-  html, body {
-    overflow-x: hidden;
+  html {
+    overflow-x: clip;
+  }
+  body {
+    overflow-x: clip;
+    position: relative;
   }
   html {
     -webkit-font-smoothing: antialiased;

@@ -69,8 +69,8 @@ export function MobileNav() {
 
       {/* Drawer */}
       <aside
-        className={`fixed top-0 start-0 z-[61] h-[100dvh] w-[86vw] max-w-sm bg-white lg:hidden flex flex-col shadow-2xl rounded-e-3xl transition-transform duration-300 ease-out ${
-          open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
+        className={`fixed top-0 start-0 z-[61] h-[100dvh] w-[86vw] max-w-sm bg-white lg:hidden flex flex-col shadow-2xl rounded-e-3xl transition-[transform,visibility] duration-300 ease-out ${
+          open ? "translate-x-0 visible" : "-translate-x-full rtl:translate-x-full invisible"
         }`}
         role="dialog"
         aria-modal="true"
