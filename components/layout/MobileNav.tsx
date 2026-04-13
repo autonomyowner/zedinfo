@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, useRouter } from "@/lib/i18n/routing";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Icon } from "@/components/ui/Icon";
 
 export function MobileNav() {
@@ -11,6 +11,7 @@ export function MobileNav() {
   const router = useRouter();
   const t = useTranslations("nav");
   const tc = useTranslations("common");
+  const locale = useLocale();
 
   // Lock body scroll while drawer open
   useEffect(() => {
@@ -22,10 +23,24 @@ export function MobileNav() {
     };
   }, [open]);
 
+  const [componentsOpen, setComponentsOpen] = useState(false);
+
+  const componentCategories = [
+    { href: "/shop/graphics-cards", label: "Cartes graphiques", labelAr: "بطاقات الرسوميات", icon: "memory" },
+    { href: "/shop/processors", label: "Processeurs", labelAr: "المعالجات", icon: "developer_board" },
+    { href: "/shop/motherboards", label: "Cartes mères", labelAr: "اللوحات الأم", icon: "dashboard" },
+    { href: "/shop/ram", label: "Mémoire RAM", labelAr: "الذاكرة العشوائية", icon: "memory_alt" },
+    { href: "/shop/storage", label: "Stockage", labelAr: "التخزين", icon: "storage" },
+    { href: "/shop/power-supplies", label: "Alimentations", labelAr: "مزودات الطاقة", icon: "bolt" },
+    { href: "/shop/cases", label: "Boîtiers", labelAr: "الصناديق", icon: "view_in_ar" },
+    { href: "/shop/cooling", label: "Refroidissement", labelAr: "التبريد", icon: "ac_unit" },
+    { href: "/shop/monitors", label: "Moniteurs", labelAr: "الشاشات", icon: "monitor" },
+    { href: "/shop/accessories", label: "Accessoires", labelAr: "الملحقات", icon: "keyboard" },
+  ];
+
   const links: { href: string; label: string; icon: string }[] = [
     { href: "/shop", label: t("shop"), icon: "storefront" },
     { href: "/shop/laptops", label: t("laptops"), icon: "laptop_mac" },
-    { href: "/shop/graphics-cards", label: t("components"), icon: "memory" },
     { href: "/configurator", label: t("configurator"), icon: "tune" },
     { href: "/support", label: t("support"), icon: "support_agent" },
     { href: "/about", label: t("about"), icon: "info" },
@@ -106,7 +121,69 @@ export function MobileNav() {
         {/* Links */}
         <nav className="flex-1 overflow-y-auto px-4 py-5">
           <div className="space-y-1">
-            {links.map((l) => (
+            {/* Shop & Laptops */}
+            {links.slice(0, 2).map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold uppercase tracking-tight text-on-surface hover:bg-primary/5 hover:text-primary transition-colors"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                  <Icon name={l.icon} className="text-[20px]" />
+                </span>
+                <span className="flex-1">{l.label}</span>
+                <Icon
+                  name="chevron_right"
+                  className="text-on-surface-variant group-hover:text-primary rtl:-scale-x-100 transition-transform group-hover:translate-x-0.5"
+                />
+              </Link>
+            ))}
+
+            {/* Composants PC — expandable dropdown */}
+            <button
+              onClick={() => setComponentsOpen(!componentsOpen)}
+              className="group flex w-full items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold uppercase tracking-tight text-on-surface hover:bg-primary/5 hover:text-primary transition-colors"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                <Icon name="memory" className="text-[20px]" />
+              </span>
+              <span className="flex-1 text-start">{t("components")}</span>
+              <Icon
+                name={componentsOpen ? "expand_less" : "expand_more"}
+                className="text-on-surface-variant group-hover:text-primary transition-transform"
+              />
+            </button>
+
+            {/* Sub-categories */}
+            <div
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                componentsOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+              }`}
+            >
+              <div className="ms-6 space-y-0.5 py-1">
+                {componentCategories.map((c) => (
+                  <Link
+                    key={c.href}
+                    href={c.href}
+                    onClick={() => setOpen(false)}
+                    className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold text-on-surface-variant hover:bg-primary/5 hover:text-primary transition-colors"
+                  >
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 text-primary/70 group-hover:bg-primary group-hover:text-white transition-colors">
+                      <Icon name={c.icon} className="text-[16px]" />
+                    </span>
+                    <span className="flex-1">{locale === "ar" ? c.labelAr : c.label}</span>
+                    <Icon
+                      name="chevron_right"
+                      className="text-[16px] text-on-surface-variant/50 group-hover:text-primary rtl:-scale-x-100"
+                    />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Remaining links: configurator, support, about */}
+            {links.slice(2).map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
