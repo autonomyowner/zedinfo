@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { ar } from "@/lib/admin-i18n";
 
 type CarrierDoc = {
   _id: any;
@@ -48,7 +49,6 @@ export default function AdminDeliveryPage() {
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [seeded, setSeeded] = useState(false);
 
-  // Auto-seed on first load if no carriers
   useEffect(() => {
     if (carriers && carriers.length === 0 && !seeded) {
       setSeeded(true);
@@ -56,7 +56,6 @@ export default function AdminDeliveryPage() {
     }
   }, [carriers, seeded, seedDefaults]);
 
-  // Initialize credential editing state from carrier data
   useEffect(() => {
     if (!carriers) return;
     const initial: Record<string, Record<string, string>> = {};
@@ -75,7 +74,7 @@ export default function AdminDeliveryPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [carriers]);
 
-  if (!carriers) return <div className="p-8">Loading...</div>;
+  if (!carriers) return <div className="p-8">{ar.dashboard.loading}</div>;
 
   const handleToggle = async (carrier: CarrierDoc) => {
     await upsert({
@@ -148,11 +147,11 @@ export default function AdminDeliveryPage() {
     <div className="p-8 max-w-5xl">
       <div className="mb-8">
         <div className="text-[10px] uppercase tracking-widest text-on-surface-variant">
-          Settings
+          {ar.deliveryPage.settings}
         </div>
-        <h1 className="text-4xl font-black tracking-tighter">Delivery</h1>
+        <h1 className="text-4xl font-black tracking-tighter">{ar.deliveryPage.title}</h1>
         <p className="text-sm text-on-surface-variant mt-2">
-          Manage delivery carriers and API integrations
+          {ar.deliveryPage.subtitle}
         </p>
       </div>
 
@@ -169,25 +168,24 @@ export default function AdminDeliveryPage() {
               key={carrier.slug}
               className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 p-6 relative overflow-hidden"
             >
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-primary-container to-primary" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
 
-              {/* Header */}
               <div className="flex items-start justify-between mb-1">
                 <div>
                   <h2 className="font-black uppercase tracking-tight">{carrier.name}</h2>
                   <div className="flex items-center gap-2 mt-1">
                     {carrier.hasApi ? (
                       <span className="text-[9px] uppercase tracking-widest bg-primary/10 text-primary px-2 py-0.5 rounded-lg font-bold">
-                        API
+                        {ar.deliveryPage.api}
                       </span>
                     ) : (
                       <span className="text-[9px] uppercase tracking-widest bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-lg font-bold">
-                        Manual
+                        {ar.deliveryPage.manual}
                       </span>
                     )}
                     {carrier.isDefault && (
                       <span className="text-[9px] uppercase tracking-widest bg-green-100 text-green-800 px-2 py-0.5 rounded-lg font-bold">
-                        Default
+                        {ar.deliveryPage.default}
                       </span>
                     )}
                     {carrier.verified && (
@@ -199,7 +197,6 @@ export default function AdminDeliveryPage() {
                   </div>
                 </div>
 
-                {/* Toggle */}
                 <button
                   onClick={() => handleToggle(carrier)}
                   className={`relative w-11 h-6 rounded-full transition-colors ${
@@ -207,14 +204,13 @@ export default function AdminDeliveryPage() {
                   }`}
                 >
                   <span
-                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                      carrier.enabled ? "translate-x-5" : ""
+                    className={`absolute top-0.5 start-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                      carrier.enabled ? "-translate-x-5" : ""
                     }`}
                   />
                 </button>
               </div>
 
-              {/* Credential fields for API carriers */}
               {carrier.hasApi && fields && (
                 <div className="mt-4 space-y-3">
                   {fields.map((f) => (
@@ -226,8 +222,9 @@ export default function AdminDeliveryPage() {
                         type="password"
                         value={creds[f.field] ?? ""}
                         onChange={(e) => setCredField(carrier.slug, f.field, e.target.value)}
-                        placeholder={`Enter ${f.label.toLowerCase()}...`}
+                        placeholder={`${ar.deliveryPage.enter} ${f.label.toLowerCase()}...`}
                         className="w-full rounded-xl border border-outline-variant px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+                        dir="ltr"
                       />
                     </div>
                   ))}
@@ -236,20 +233,19 @@ export default function AdminDeliveryPage() {
                     <button
                       onClick={() => handleSaveCredentials(carrier)}
                       disabled={isSaving}
-                      className="rounded-xl bg-primary text-white px-4 py-2 text-xs font-bold uppercase tracking-widest shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                      className="rounded-xl bg-primary text-white px-4 py-2 text-xs font-bold shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all disabled:opacity-50"
                     >
-                      {isSaving ? "Saving..." : "Save"}
+                      {isSaving ? ar.deliveryPage.saving : ar.deliveryPage.save}
                     </button>
                     <button
                       onClick={() => handleTest(carrier)}
                       disabled={isTesting}
-                      className="rounded-xl bg-surface-container-high text-on-surface px-4 py-2 text-xs font-bold uppercase tracking-widest shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                      className="rounded-xl bg-surface-container-high text-on-surface px-4 py-2 text-xs font-bold shadow-card hover:brightness-110 hover:-translate-y-0.5 transition-all disabled:opacity-50"
                     >
-                      {isTesting ? "Testing..." : "Test Connection"}
+                      {isTesting ? ar.deliveryPage.testing : ar.deliveryPage.testConnection}
                     </button>
                   </div>
 
-                  {/* Test result */}
                   {testResult && (
                     <div
                       className={`rounded-xl p-3 text-xs mt-2 ${
@@ -259,27 +255,25 @@ export default function AdminDeliveryPage() {
                       }`}
                     >
                       {testResult.success
-                        ? "Connection successful!"
-                        : `Connection failed: ${testResult.error || "Unknown error"}`}
+                        ? ar.deliveryPage.connectionSuccess
+                        : `${ar.deliveryPage.connectionFailed} ${testResult.error || ar.deliveryPage.unknownError}`}
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Manual carriers info */}
               {!carrier.hasApi && (
                 <p className="text-xs text-on-surface-variant mt-3">
-                  Manual tracking entry — no API integration. Add tracking numbers directly on each order.
+                  {ar.deliveryPage.manualInfo}
                 </p>
               )}
 
-              {/* Set as default */}
               {!carrier.isDefault && carrier.enabled && (
                 <button
                   onClick={() => handleSetDefault(carrier)}
-                  className="mt-4 text-xs text-primary font-bold uppercase tracking-widest hover:underline"
+                  className="mt-4 text-xs text-primary font-bold hover:underline"
                 >
-                  Set as Default
+                  {ar.deliveryPage.setDefault}
                 </button>
               )}
             </div>

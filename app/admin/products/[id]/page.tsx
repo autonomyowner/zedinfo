@@ -11,8 +11,8 @@ export default function EditProductPage() {
   const products = useQuery(api.products.list, {});
   const product = products?.find((p: any) => p._id === id);
 
-  if (!products) return <div className="p-8">Loading...</div>;
-  if (!product) return <div className="p-8">Not found</div>;
+  if (!products) return <div className="p-8">جاري التحميل...</div>;
+  if (!product) return <div className="p-8">غير موجود</div>;
 
   return (
     <ProductForm

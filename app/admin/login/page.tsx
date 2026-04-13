@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import crypto from "crypto";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
+import { ar } from "@/lib/admin-i18n";
 
 function hashToken(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
@@ -22,7 +23,6 @@ async function login(formData: FormData) {
   }
   const token = crypto.randomUUID();
   const cookieStore = await cookies();
-  // Store the hashed token in a second cookie so middleware can validate
   cookieStore.set("admin_session", token, {
     httpOnly: true,
     sameSite: "lax",
@@ -52,23 +52,23 @@ export default async function AdminLoginPage({
         action={login}
         className="bg-white rounded-3xl shadow-card ring-1 ring-outline-variant/40 p-10 lg:p-12 max-w-md w-full mx-4 relative overflow-hidden"
       >
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-primary-container to-primary" />
-        <h1 className="text-3xl font-black tracking-tighter uppercase mb-8">
-          ZED ADMIN
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
+        <h1 className="text-3xl font-black tracking-tighter mb-8">
+          {ar.login.title}
         </h1>
         <div className="mb-4">
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username">{ar.login.username}</Label>
           <Input id="username" name="username" type="text" required autoFocus />
         </div>
         <div className="mb-6">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{ar.login.password}</Label>
           <Input id="password" name="password" type="password" required />
         </div>
         {sp.error && (
-          <p className="text-error text-sm mb-4">Invalid credentials</p>
+          <p className="text-error text-sm mb-4">{ar.login.error}</p>
         )}
         <Button type="submit" className="w-full">
-          Sign In
+          {ar.login.submit}
         </Button>
       </form>
     </div>

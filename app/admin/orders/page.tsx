@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatDzd, formatDateTime } from "@/lib/format";
 import { Badge } from "@/components/ui/Badge";
+import { ar } from "@/lib/admin-i18n";
 
 const STATUSES = ["pending", "confirmed", "preparing", "shipping", "delivered", "cancelled"] as const;
 
@@ -18,33 +19,33 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-black tracking-tighter uppercase mb-8">
-        Orders
+      <h1 className="text-4xl font-black tracking-tighter mb-8">
+        {ar.orders.title}
       </h1>
       <div className="flex gap-2 mb-6 flex-wrap">
         {(["all", ...STATUSES] as const).map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest font-bold ring-1 transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold ring-1 transition-all ${
               filter === s
                 ? "bg-primary text-white ring-primary shadow-card"
                 : "bg-white text-on-surface-variant ring-outline-variant/60 hover:ring-primary/40"
             }`}
           >
-            {s}
+            {s === "all" ? ar.orders.all : ar.status[s]}
           </button>
         ))}
       </div>
       <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-950 text-white text-[10px] uppercase tracking-widest">
+          <thead className="bg-slate-950 text-white text-[10px] tracking-widest">
             <tr>
-              <th className="text-start p-4">Order #</th>
-              <th className="text-start p-4 hidden md:table-cell">Customer</th>
-              <th className="text-start p-4 hidden lg:table-cell">Date</th>
-              <th className="text-end p-4">Total</th>
-              <th className="p-4">Status</th>
+              <th className="text-start p-4">{ar.orders.orderNumber}</th>
+              <th className="text-start p-4 hidden md:table-cell">{ar.orders.customer}</th>
+              <th className="text-start p-4 hidden lg:table-cell">{ar.orders.date}</th>
+              <th className="text-end p-4">{ar.orders.total}</th>
+              <th className="p-4">{ar.orders.status}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +66,7 @@ export default function AdminOrdersPage() {
                 <td className="p-4 text-end font-bold">{formatDzd(o.totalDzd)}</td>
                 <td className="p-4 text-center">
                   <Badge variant={o.status === "delivered" ? "success" : o.status === "cancelled" ? "error" : "primary"}>
-                    {o.status}
+                    {ar.status[o.status] || o.status}
                   </Badge>
                 </td>
               </tr>
@@ -73,7 +74,7 @@ export default function AdminOrdersPage() {
           </tbody>
         </table>
         {orders?.length === 0 && (
-          <div className="p-12 text-center text-on-surface-variant">No orders</div>
+          <div className="p-12 text-center text-on-surface-variant">{ar.orders.noOrders}</div>
         )}
       </div>
     </div>

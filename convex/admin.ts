@@ -8,6 +8,14 @@ export const dashboard = query({
     const now = Date.now();
     const d7 = now - 7 * 24 * 60 * 60 * 1000;
     const d30 = now - 30 * 24 * 60 * 60 * 1000;
+    const recentOrders = [...orders]
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 5);
+    const lowStockProducts = products
+      .filter((p) => p.stock <= 3)
+      .sort((a, b) => a.stock - b.stock)
+      .slice(0, 5);
+
     return {
       totalOrders: orders.length,
       pending: orders.filter((o) => o.status === "pending").length,
@@ -15,6 +23,8 @@ export const dashboard = query({
       revenue30d: orders.filter((o) => o.createdAt > d30).reduce((s, o) => s + o.totalDzd, 0),
       totalProducts: products.length,
       lowStock: products.filter((p) => p.stock <= 3).length,
+      recentOrders,
+      lowStockProducts,
     };
   },
 });

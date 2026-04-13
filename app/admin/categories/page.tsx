@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Input, Label } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { ar } from "@/lib/admin-i18n";
 
 export default function AdminCategoriesPage() {
   const categories = useQuery(api.categories.list, {});
@@ -27,17 +28,17 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-4xl font-black tracking-tighter uppercase mb-8">
-        Categories
+      <h1 className="text-4xl font-black tracking-tighter mb-8">
+        {ar.categoriesList.title}
       </h1>
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-slate-950 text-white text-[10px] uppercase tracking-widest">
+            <thead className="bg-slate-950 text-white text-[10px] tracking-widest">
               <tr>
-                <th className="text-start p-4">Slug</th>
-                <th className="text-start p-4">Name (FR)</th>
-                <th className="text-start p-4">Icon</th>
+                <th className="text-start p-4">{ar.categoriesList.slug}</th>
+                <th className="text-start p-4">{ar.categoriesList.nameFr}</th>
+                <th className="text-start p-4">{ar.categoriesList.icon}</th>
                 <th className="p-4"></th>
               </tr>
             </thead>
@@ -54,11 +55,11 @@ export default function AdminCategoriesPage() {
                   <td className="p-4 text-end">
                     <button
                       onClick={() => {
-                        if (confirm("Delete?")) remove({ id: c._id });
+                        if (confirm(ar.categoriesList.deleteConfirm)) remove({ id: c._id });
                       }}
-                      className="text-error text-xs font-bold uppercase"
+                      className="text-error text-xs font-bold"
                     >
-                      Delete
+                      {ar.categoriesList.delete}
                     </button>
                   </td>
                 </tr>
@@ -68,50 +69,53 @@ export default function AdminCategoriesPage() {
         </div>
 
         <form onSubmit={onAdd} className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 p-6 space-y-4 relative overflow-hidden">
-          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-primary-container to-primary" />
-          <h2 className="font-black uppercase tracking-tight">New Category</h2>
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
+          <h2 className="font-black tracking-tight">{ar.categoriesList.newCategory}</h2>
           <div>
-            <Label>Slug</Label>
+            <Label>{ar.categoriesList.slug}</Label>
             <Input
               value={form.slug}
               onChange={(e) => setForm({ ...form, slug: e.target.value })}
               required
+              dir="ltr"
             />
           </div>
           <div>
-            <Label>Name (FR)</Label>
+            <Label>{ar.categoriesList.nameFr}</Label>
             <Input
               value={form.nameFr}
               onChange={(e) => setForm({ ...form, nameFr: e.target.value })}
               required
+              dir="ltr"
             />
           </div>
           <div>
-            <Label>Name (AR)</Label>
+            <Label>{ar.categoriesList.nameAr}</Label>
             <Input
-              dir="rtl"
               value={form.nameAr}
               onChange={(e) => setForm({ ...form, nameAr: e.target.value })}
               required
             />
           </div>
           <div>
-            <Label>Icon (Material Symbols)</Label>
+            <Label>{ar.categoriesList.iconLabel}</Label>
             <Input
               value={form.icon}
               onChange={(e) => setForm({ ...form, icon: e.target.value })}
+              dir="ltr"
             />
           </div>
           <div>
-            <Label>Order</Label>
+            <Label>{ar.categoriesList.order}</Label>
             <Input
               type="number"
               value={form.order}
               onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
+              dir="ltr"
             />
           </div>
           <Button type="submit" className="w-full">
-            Add
+            {ar.categoriesList.add}
           </Button>
         </form>
       </div>

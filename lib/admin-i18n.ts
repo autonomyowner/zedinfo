@@ -1,0 +1,167 @@
+// Arabic translations for admin dashboard
+export const ar = {
+  // Nav
+  nav: {
+    dashboard: "لوحة التحكم",
+    products: "المنتجات",
+    categories: "الفئات",
+    orders: "الطلبات",
+    delivery: "التوصيل",
+    logout: "تسجيل الخروج",
+  },
+
+  // Login
+  login: {
+    title: "لوحة الإدارة",
+    username: "اسم المستخدم",
+    password: "كلمة المرور",
+    submit: "تسجيل الدخول",
+    error: "بيانات الاعتماد غير صحيحة",
+  },
+
+  // Dashboard
+  dashboard: {
+    title: "لوحة التحكم",
+    totalOrders: "إجمالي الطلبات",
+    pending: "قيد الانتظار",
+    revenue7d: "إيرادات 7 أيام",
+    revenue30d: "إيرادات 30 يوم",
+    products: "المنتجات",
+    lowStock: "مخزون منخفض",
+    recentOrders: "أحدث الطلبات",
+    lowStockAlerts: "تنبيهات المخزون المنخفض",
+    noRecentOrders: "لا توجد طلبات حديثة",
+    noLowStock: "جميع المنتجات متوفرة",
+    loading: "جاري التحميل...",
+    viewAll: "عرض الكل",
+    units: "وحدة",
+  },
+
+  // Orders
+  orders: {
+    title: "الطلبات",
+    orderNumber: "رقم الطلب",
+    customer: "العميل",
+    date: "التاريخ",
+    total: "المجموع",
+    status: "الحالة",
+    noOrders: "لا توجد طلبات",
+    all: "الكل",
+  },
+
+  // Order detail
+  orderDetail: {
+    order: "طلب",
+    items: "المنتجات",
+    qty: "الكمية",
+    subtotal: "المجموع الفرعي",
+    shipping: "الشحن",
+    total: "الإجمالي",
+    tracking: "التتبع",
+    carrier: "شركة الشحن",
+    selectCarrier: "اختر شركة الشحن",
+    custom: "مخصص",
+    trackingNumber: "رقم التتبع",
+    trackingUrl: "رابط التتبع الخارجي",
+    estimatedDelivery: "التسليم المتوقع",
+    saveTracking: "حفظ التتبع",
+    createShipment: "إنشاء شحنة",
+    creating: "جاري الإنشاء...",
+    status: "الحالة",
+    statusNote: "ملاحظة الحالة (اختياري)",
+    addContext: "أضف سياقاً...",
+    history: "السجل",
+    customerInfo: "العميل",
+    name: "الاسم",
+    phone: "الهاتف",
+    email: "البريد الإلكتروني",
+    wilaya: "الولاية",
+    address: "العنوان",
+    notes: "ملاحظات",
+    call: "اتصال",
+    whatsapp: "واتساب",
+  },
+
+  // Statuses
+  status: {
+    pending: "قيد الانتظار",
+    confirmed: "مؤكد",
+    preparing: "قيد التحضير",
+    shipping: "قيد الشحن",
+    delivered: "تم التسليم",
+    cancelled: "ملغي",
+  } as Record<string, string>,
+
+  // Products
+  productsList: {
+    title: "المنتجات",
+    newProduct: "+ منتج جديد",
+    name: "الاسم",
+    brand: "العلامة التجارية",
+    price: "السعر",
+    stock: "المخزون",
+    edit: "تعديل",
+    delete: "حذف",
+    noProducts: "لا توجد منتجات بعد",
+    deleteConfirm: "هل أنت متأكد من الحذف؟",
+    image: "الصورة",
+  },
+
+  // Product form
+  productForm: {
+    editProduct: "تعديل المنتج",
+    newProduct: "منتج جديد",
+    slug: "المعرّف",
+    brand: "العلامة التجارية",
+    category: "الفئة",
+    selectCategory: "—",
+    nameFr: "الاسم (فرنسي)",
+    nameAr: "الاسم (عربي)",
+    descFr: "الوصف (فرنسي)",
+    descAr: "الوصف (عربي)",
+    price: "السعر (د.ج)",
+    stock: "المخزون",
+    images: "روابط الصور (رابط في كل سطر)",
+    specs: "المواصفات (JSON)",
+    featured: "منتج مميز",
+    save: "حفظ",
+    saving: "جاري الحفظ...",
+    cancel: "إلغاء",
+    invalidJson: "JSON غير صالح",
+  },
+
+  // Categories
+  categoriesList: {
+    title: "الفئات",
+    slug: "المعرّف",
+    nameFr: "الاسم (فرنسي)",
+    icon: "الأيقونة",
+    delete: "حذف",
+    deleteConfirm: "هل أنت متأكد من الحذف؟",
+    newCategory: "فئة جديدة",
+    nameAr: "الاسم (عربي)",
+    iconLabel: "الأيقونة (Material Symbols)",
+    order: "الترتيب",
+    add: "إضافة",
+  },
+
+  // Delivery
+  deliveryPage: {
+    settings: "الإعدادات",
+    title: "التوصيل",
+    subtitle: "إدارة شركات التوصيل وتكاملات API",
+    api: "API",
+    manual: "يدوي",
+    default: "افتراضي",
+    save: "حفظ",
+    saving: "جاري الحفظ...",
+    testConnection: "اختبار الاتصال",
+    testing: "جاري الاختبار...",
+    connectionSuccess: "تم الاتصال بنجاح!",
+    connectionFailed: "فشل الاتصال:",
+    unknownError: "خطأ غير معروف",
+    manualInfo: "إدخال التتبع يدوياً — بدون تكامل API. أضف أرقام التتبع مباشرة في كل طلب.",
+    setDefault: "تعيين كافتراضي",
+    enter: "أدخل",
+  },
+};

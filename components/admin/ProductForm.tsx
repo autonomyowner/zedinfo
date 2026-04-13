@@ -6,6 +6,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Input, Textarea, Select, Label } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { ar } from "@/lib/admin-i18n";
 
 type InitialProduct = {
   _id?: string;
@@ -58,7 +59,7 @@ export function ProductForm({ initial }: { initial?: InitialProduct }) {
       try {
         specs = JSON.parse(specsText);
       } catch {
-        alert("Invalid specs JSON");
+        alert(ar.productForm.invalidJson);
         setSaving(false);
         return;
       }
@@ -91,133 +92,162 @@ export function ProductForm({ initial }: { initial?: InitialProduct }) {
 
   return (
     <form onSubmit={onSubmit} className="p-8 space-y-6 max-w-4xl">
-      <h1 className="text-4xl font-black tracking-tighter uppercase">
-        {initial ? "Edit Product" : "New Product"}
+      <h1 className="text-4xl font-black tracking-tighter">
+        {initial ? ar.productForm.editProduct : ar.productForm.newProduct}
       </h1>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <Label>Slug</Label>
-          <Input
-            value={form.slug}
-            onChange={(e) => setForm({ ...form, slug: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <Label>Brand</Label>
-          <Input
-            value={form.brand}
-            onChange={(e) => setForm({ ...form, brand: e.target.value })}
-            required
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <Label>Category</Label>
-          <Select
-            value={form.categoryId}
-            onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-            required
-          >
-            <option value="">—</option>
-            {categories?.map((c: any) => (
-              <option key={c._id} value={c._id}>
-                {c.nameFr}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <Label>Name (FR)</Label>
-          <Input
-            value={form.nameFr}
-            onChange={(e) => setForm({ ...form, nameFr: e.target.value })}
-            required
-          />
-        </div>
-        <div>
-          <Label>Name (AR)</Label>
-          <Input
-            value={form.nameAr}
-            onChange={(e) => setForm({ ...form, nameAr: e.target.value })}
-            required
-            dir="rtl"
-          />
-        </div>
-        <div>
-          <Label>Desc (FR)</Label>
-          <Textarea
-            rows={3}
-            value={form.descFr}
-            onChange={(e) => setForm({ ...form, descFr: e.target.value })}
-          />
-        </div>
-        <div>
-          <Label>Desc (AR)</Label>
-          <Textarea
-            rows={3}
-            value={form.descAr}
-            onChange={(e) => setForm({ ...form, descAr: e.target.value })}
-            dir="rtl"
-          />
-        </div>
-        <div>
-          <Label>Price (DZD)</Label>
-          <Input
-            type="number"
-            value={form.priceDzd}
-            onChange={(e) => setForm({ ...form, priceDzd: Number(e.target.value) })}
-            required
-          />
-        </div>
-        <div>
-          <Label>Stock</Label>
-          <Input
-            type="number"
-            value={form.stock}
-            onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-            required
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <Label>Image URLs (one per line)</Label>
-          <Textarea
-            rows={4}
-            value={imagesText}
-            onChange={(e) => setImagesText(e.target.value)}
-          />
-        </div>
-        <div className="sm:col-span-2">
-          <Label>Specs (JSON)</Label>
-          <Textarea
-            rows={8}
-            className="font-mono"
-            value={specsText}
-            onChange={(e) => setSpecsText(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+      {/* Basic info */}
+      <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 p-6 relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <Label>{ar.productForm.slug}</Label>
+            <Input
+              value={form.slug}
+              onChange={(e) => setForm({ ...form, slug: e.target.value })}
+              required
             />
-            Featured
-          </label>
+          </div>
+          <div>
+            <Label>{ar.productForm.brand}</Label>
+            <Input
+              value={form.brand}
+              onChange={(e) => setForm({ ...form, brand: e.target.value })}
+              required
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>{ar.productForm.category}</Label>
+            <Select
+              value={form.categoryId}
+              onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+              required
+            >
+              <option value="">{ar.productForm.selectCategory}</option>
+              {categories?.map((c: any) => (
+                <option key={c._id} value={c._id}>
+                  {c.nameFr}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {/* Names & Descriptions */}
+      <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 p-6 relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <Label>{ar.productForm.nameFr}</Label>
+            <Input
+              value={form.nameFr}
+              onChange={(e) => setForm({ ...form, nameFr: e.target.value })}
+              required
+              dir="ltr"
+            />
+          </div>
+          <div>
+            <Label>{ar.productForm.nameAr}</Label>
+            <Input
+              value={form.nameAr}
+              onChange={(e) => setForm({ ...form, nameAr: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <Label>{ar.productForm.descFr}</Label>
+            <Textarea
+              rows={3}
+              value={form.descFr}
+              onChange={(e) => setForm({ ...form, descFr: e.target.value })}
+              dir="ltr"
+            />
+          </div>
+          <div>
+            <Label>{ar.productForm.descAr}</Label>
+            <Textarea
+              rows={3}
+              value={form.descAr}
+              onChange={(e) => setForm({ ...form, descAr: e.target.value })}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing & Stock */}
+      <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 p-6 relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <Label>{ar.productForm.price}</Label>
+            <Input
+              type="number"
+              value={form.priceDzd}
+              onChange={(e) => setForm({ ...form, priceDzd: Number(e.target.value) })}
+              required
+              dir="ltr"
+            />
+          </div>
+          <div>
+            <Label>{ar.productForm.stock}</Label>
+            <Input
+              type="number"
+              value={form.stock}
+              onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
+              required
+              dir="ltr"
+            />
+          </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+              />
+              {ar.productForm.featured}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Images & Specs */}
+      <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 p-6 relative overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-primary-container to-primary" />
+        <div className="space-y-4">
+          <div>
+            <Label>{ar.productForm.images}</Label>
+            <Textarea
+              rows={4}
+              value={imagesText}
+              onChange={(e) => setImagesText(e.target.value)}
+              dir="ltr"
+            />
+          </div>
+          <div>
+            <Label>{ar.productForm.specs}</Label>
+            <Textarea
+              rows={8}
+              className="font-mono"
+              value={specsText}
+              onChange={(e) => setSpecsText(e.target.value)}
+              dir="ltr"
+            />
+          </div>
         </div>
       </div>
 
       <div className="flex gap-4">
         <Button type="submit" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? ar.productForm.saving : ar.productForm.save}
         </Button>
         <button
           type="button"
           onClick={() => router.push("/admin/products")}
-          className="text-on-surface-variant text-xs font-bold uppercase"
+          className="text-on-surface-variant text-xs font-bold"
         >
-          Cancel
+          {ar.productForm.cancel}
         </button>
       </div>
     </form>
