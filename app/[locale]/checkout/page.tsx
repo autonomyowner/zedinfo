@@ -12,7 +12,7 @@ import { useCart } from "@/lib/cart-store";
 import { Input, Textarea, Select, Label } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { WILAYAS, getShippingCost } from "@/lib/wilayas";
+import { WILAYAS_BILINGUAL, getCommunesForWilaya, getShippingCost } from "@/lib/wilayas";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatDzd } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
@@ -21,6 +21,7 @@ const schema = z.object({
   fullName: z.string().min(2),
   phone: z.string().min(8),
   wilaya: z.string().min(1),
+  commune: z.string().min(1),
   address: z.string().min(5),
   notes: z.string().optional(),
   paymentMethod: z.enum(["cod", "whatsapp"]),
@@ -47,6 +48,7 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -54,6 +56,12 @@ export default function CheckoutPage() {
   });
 
   const wilaya = watch("wilaya");
+  const communes = wilaya ? getCommunesForWilaya(wilaya) : [];
+
+  // Reset commune when wilaya changes
+  useEffect(() => {
+    setValue("commune", "");
+  }, [wilaya, setValue]);
   const shipping = wilaya ? getShippingCost(wilaya) : 800;
   const total = subtotal + shipping;
 
@@ -76,6 +84,7 @@ export default function CheckoutPage() {
           fullName: data.fullName,
           phone: data.phone,
           wilaya: data.wilaya,
+          commune: data.commune || undefined,
           address: data.address,
           notes: data.notes || undefined,
         },
@@ -96,6 +105,7 @@ export default function CheckoutPage() {
             fullName: data.fullName,
             phone: data.phone,
             wilaya: data.wilaya,
+            commune: data.commune,
             address: data.address,
             notes: data.notes,
           },
@@ -164,12 +174,26 @@ export default function CheckoutPage() {
                 <Label>{t("wilaya")}</Label>
                 <Select {...register("wilaya")}>
                   <option value="">—</option>
-                  {WILAYAS.map((w) => (
-                    <option key={w} value={w}>
-                      {w}
+                  {WILAYAS_BILINGUAL.map((w) => (
+                    <option key={w.fr} value={w.fr}>
+                      {locale === "ar" ? `${w.ar} — ${w.fr}` : w.fr}
                     </option>
                   ))}
                 </Select>
+              </div>
+              <div>
+                <Label>{t("commune")}</Label>
+                <Select {...register("commune")} disabled={!wilaya}>
+                  <option value="">{wilaya ? "—" : t("communePlaceholder")}</option>
+                  {communes.map((c) => (
+                    <option key={c.fr} value={c.fr}>
+                      {locale === "ar" ? `${c.ar} — ${c.fr}` : c.fr}
+                    </option>
+                  ))}
+                </Select>
+                {errors.commune && (
+                  <p className="text-error text-xs mt-1">{errors.commune.message}</p>
+                )}
               </div>
               <div>
                 <Label>{t("address")}</Label>

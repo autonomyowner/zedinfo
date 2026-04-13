@@ -130,6 +130,8 @@
     "email": "البريد الإلكتروني (اختياري)",
     "shippingAddress": "عنوان الشحن",
     "wilaya": "الولاية",
+    "commune": "البلدية",
+    "communePlaceholder": "اختر الولاية أولاً",
     "address": "العنوان",
     "notes": "ملاحظات (اختياري)",
     "paymentMethod": "طريقة الدفع",

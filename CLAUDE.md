@@ -21,7 +21,9 @@ npm run dev              # Next.js dev server (Turbopack)
 npx convex dev           # Convex function watcher — run in a SECOND terminal during dev
 npm run build            # Production build (runs typecheck + static generation)
 npm run lint             # ESLint
-npx convex run seed:default      # Seed 11 categories + 18 products
+npx convex run seed:default      # Seed 11 categories + 18 mockup products
+npx convex run seedReal:default  # Seed 11 categories + 58 real products (from competitors)
+node scripts/upload-images.mjs   # Upload external product images to Convex storage
 npx convex env set KEY VALUE     # Set Convex deployment env vars
 npx convex deploy        # Deploy Convex functions to production
 ```
@@ -82,7 +84,25 @@ Product `specs` must match the shape the engine expects (`type: "cpu" | "motherb
 
 ## Images
 
-`next.config.ts` allows `lh3.googleusercontent.com` for the Stitch mockup product images currently in seed data. If you add another image host, whitelist it there too.
+- Product images are stored in **Convex file storage** (not hotlinked). `next.config.ts` whitelists `*.convex.cloud`, `*.convex.site`, and `lh3.googleusercontent.com`.
+- Never hotlink images from external retailers — they block server-side fetches (403). Always download locally then upload to Convex storage.
+
+## Adding new products from competitor websites
+
+Proven workflow for scraping real products from Algerian PC retailers and importing them:
+
+1. **Browse the competitor site** using Chrome MCP tools (`navigate_page`, `take_snapshot`, `evaluate_script`).
+2. **Extract product data** by running JS on the page: name, price (DZD), image URL, specs. Use `evaluate_script` with a script that queries `.product` elements.
+3. **Create a seed file** (`convex/seedReal.ts` is the reference) with proper `specs` objects matching the configurator engine types (`cpu`, `gpu`, `motherboard`, `ram`, `storage`, `psu`, `case`, `cooler`).
+4. **Run the seed**: `npx convex run seedReal:default`
+5. **Upload images to Convex storage** using `scripts/upload-images.mjs` — this downloads from the retailer (works from local Node with User-Agent/Referer headers) and uploads to Convex file storage, then updates product records with the Convex URLs.
+   ```bash
+   node scripts/upload-images.mjs                          # dev
+   NEXT_PUBLIC_CONVEX_URL=https://joyous-marlin-205.eu-west-1.convex.cloud node scripts/upload-images.mjs  # prod
+   ```
+6. **Deploy**: `npx convex deploy --cmd "npm run build" --yes` then `git push` for Vercel.
+
+Key competitor sites: `wifidjelfa.com` (Djelfa), and others as discovered. Category URL patterns for wifidjelfa: `/product-category/99236150627014130/99236150627008520/` (CPUs), `...8523` (GPUs), `...8524` (Motherboards), `...8525` (RAM), `...8540` (SSDs), `...8526` (PSUs), `...8522` (Cases), `...8521` (Cooling).
 
 ## Gotchas
 

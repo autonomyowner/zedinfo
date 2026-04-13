@@ -131,6 +131,8 @@
     "email": "Email (optionnel)",
     "shippingAddress": "Adresse de livraison",
     "wilaya": "Wilaya",
+    "commune": "Commune",
+    "communePlaceholder": "Sélectionnez d'abord une wilaya",
     "address": "Adresse",
     "notes": "Notes (optionnel)",
     "paymentMethod": "Mode de paiement",

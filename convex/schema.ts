@@ -83,6 +83,7 @@ export default defineSchema({
       phone: v.string(),
       email: v.optional(v.string()),
       wilaya: v.string(),
+      commune: v.optional(v.string()),
       address: v.string(),
       notes: v.optional(v.string()),
     }),

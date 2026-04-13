@@ -12,6 +12,7 @@ export function buildWhatsAppUrl(opts: {
     fullName: string;
     phone: string;
     wilaya: string;
+    commune?: string;
     address: string;
     notes?: string;
   };
@@ -37,6 +38,7 @@ export function buildWhatsAppUrl(opts: {
     lines.push(`الاسم: ${customer.fullName}`);
     lines.push(`الهاتف: ${customer.phone}`);
     lines.push(`الولاية: ${customer.wilaya}`);
+    if (customer.commune) lines.push(`البلدية: ${customer.commune}`);
     lines.push(`العنوان: ${customer.address}`);
     if (customer.notes) lines.push(`ملاحظات: ${customer.notes}`);
   } else {
@@ -55,6 +57,7 @@ export function buildWhatsAppUrl(opts: {
     lines.push(`Nom: ${customer.fullName}`);
     lines.push(`Téléphone: ${customer.phone}`);
     lines.push(`Wilaya: ${customer.wilaya}`);
+    if (customer.commune) lines.push(`Commune: ${customer.commune}`);
     lines.push(`Adresse: ${customer.address}`);
     if (customer.notes) lines.push(`Notes: ${customer.notes}`);
   }
