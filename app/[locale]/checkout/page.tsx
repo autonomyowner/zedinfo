@@ -175,7 +175,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container-zed py-6 px-4 sm:py-12 lg:py-16 sm:px-6">
+    <div className="container-zed py-6 sm:py-12 lg:py-16 overflow-x-hidden">
       <h1 className="text-2xl sm:text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-6 sm:mb-12">
         {t("title")}
       </h1>
