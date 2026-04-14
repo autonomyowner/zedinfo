@@ -15,7 +15,17 @@ const ASPECT_RATIOS = [
 
 function buildDefaultPrompt(product: any) {
   if (!product) return "";
-  return `Create a promotional banner for "${product.nameFr}" by ${product.brand}, priced at ${product.priceDzd} DZD. Include the product image prominently, brand name, and price tag. Modern tech aesthetic, dark background with navy (#0035d0) accents, clean typography, eye-catching design for social media.`;
+  return `Create a professional promotional banner image with these requirements:
+- Solid deep blue background (exact color #0035d0), clean and modern
+- The store brand "ZED INFORMATIQUE" displayed prominently at the top in bold white text
+- The word "PROMOTION" or "OFFRE SPÉCIALE" in large, eye-catching yellow/gold text
+- Product name: "${product.nameFr}" in white text
+- Price: "${product.priceDzd} DZD" displayed large and bold in white or yellow
+- Brand: "${product.brand}" shown clearly
+- The product photo should be centered and prominent
+- Modern tech/gaming aesthetic, sleek layout
+- Clean typography, no clutter
+- Social media ready, high contrast for visibility`;
 }
 
 export default function PromotionsPage() {
