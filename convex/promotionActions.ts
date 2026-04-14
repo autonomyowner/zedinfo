@@ -141,7 +141,9 @@ export const postToMeta = action({
     const pageId = process.env.META_PAGE_ID;
     const igAccountId = process.env.META_INSTAGRAM_ACCOUNT_ID;
 
-    if (!pageToken) throw new Error("META_PAGE_ACCESS_TOKEN not set");
+    if (!pageToken) throw new Error("Publication Meta non configurée. Ajoutez META_PAGE_ACCESS_TOKEN dans les variables d'environnement Convex (npx convex env set META_PAGE_ACCESS_TOKEN <token>).");
+    if ((platform === "facebook" || platform === "both") && !pageId) throw new Error("Publication Facebook non configurée. Ajoutez META_PAGE_ID dans les variables d'environnement Convex.");
+    if ((platform === "instagram" || platform === "both") && !igAccountId) throw new Error("Publication Instagram non configurée. Ajoutez META_INSTAGRAM_ACCOUNT_ID dans les variables d'environnement Convex.");
 
     const promo: any = await ctx.runQuery(api.promotions.getById, { id: promoId });
     if (!promo) throw new Error("Promotion not found");

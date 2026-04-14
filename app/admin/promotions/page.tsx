@@ -237,8 +237,9 @@ CRITICAL QUALITY REQUIREMENTS:
 }
 
 export default function PromotionsPage() {
-  const products = useQuery(api.products.list, {});
-  const promotions = useQuery(api.promotions.list, {});
+  const products = useQuery(api.products.list, {}) ?? undefined;
+  const promotions = useQuery(api.promotions.list, {}) ?? undefined;
+  const isLoading = products === undefined;
   const generateImage = useAction(api.promotionActions.generateImage);
   const postToMeta = useAction(api.promotionActions.postToMeta);
   const removePromotion = useMutation(api.promotions.remove);
@@ -365,18 +366,28 @@ export default function PromotionsPage() {
             <label className="block text-sm font-bold text-on-surface mb-2">
               {ar.promotions.selectProduct}
             </label>
-            <select
-              value={selectedProductId}
-              onChange={(e) => handleProductSelect(e.target.value)}
-              className="w-full rounded-xl border border-outline-variant/60 bg-surface px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="">— {ar.promotions.selectProduct} —</option>
-              {products?.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.nameFr} — {p.brand} — {p.priceDzd} DZD
+            <div className="relative">
+              <select
+                value={selectedProductId}
+                onChange={(e) => handleProductSelect(e.target.value)}
+                disabled={isLoading}
+                className="w-full rounded-xl border border-outline-variant/60 bg-surface px-4 py-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50"
+              >
+                <option value="">
+                  {isLoading ? "Chargement des produits..." : `— ${ar.promotions.selectProduct} —`}
                 </option>
-              ))}
-            </select>
+                {products?.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.nameFr} — {p.brand} — {p.priceDzd} DZD
+                  </option>
+                ))}
+              </select>
+              {isLoading && (
+                <div className="absolute right-10 top-1/2 -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-bold text-on-surface mb-2">
@@ -587,30 +598,35 @@ export default function PromotionsPage() {
                 <span className="material-symbols-outlined text-base">download</span>
                 {ar.promotions.download}
               </a>
-              <button
-                onClick={() => handlePost("facebook")}
-                disabled={posting}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all disabled:opacity-50"
-              >
-                <span className="material-symbols-outlined text-base">share</span>
-                {posting ? ar.promotions.posting : ar.promotions.postFacebook}
-              </button>
-              <button
-                onClick={() => handlePost("instagram")}
-                disabled={posting}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
-              >
-                <span className="material-symbols-outlined text-base">photo_camera</span>
-                {posting ? ar.promotions.posting : ar.promotions.postInstagram}
-              </button>
-              <button
-                onClick={() => handlePost("both")}
-                disabled={posting}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 transition-all disabled:opacity-50"
-              >
-                <span className="material-symbols-outlined text-base">public</span>
-                {posting ? ar.promotions.posting : ar.promotions.postBoth}
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => handlePost("facebook")}
+                  disabled={posting}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-base">share</span>
+                  {posting ? ar.promotions.posting : ar.promotions.postFacebook}
+                </button>
+                <button
+                  onClick={() => handlePost("instagram")}
+                  disabled={posting}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-base">photo_camera</span>
+                  {posting ? ar.promotions.posting : ar.promotions.postInstagram}
+                </button>
+                <button
+                  onClick={() => handlePost("both")}
+                  disabled={posting}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 transition-all disabled:opacity-50"
+                >
+                  <span className="material-symbols-outlined text-base">public</span>
+                  {posting ? ar.promotions.posting : ar.promotions.postBoth}
+                </button>
+                <span className="text-xs text-on-surface-variant opacity-70 ms-1">
+                  Nécessite les clés Meta API
+                </span>
+              </div>
             </div>
           </div>
         )}
