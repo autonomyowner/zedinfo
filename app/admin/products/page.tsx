@@ -60,17 +60,49 @@ function InlineStock({ productId, value }: { productId: Id<"products">; value: n
 
 export default function AdminProductsPage() {
   const products = useQuery(api.products.list, {});
+  const categories = useQuery(api.categories.list);
   const remove = useMutation(api.products.remove);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
+  const filtered = products?.filter((p: any) =>
+    categoryFilter === "all" ? true : p.categoryId === categoryFilter
+  );
 
   return (
     <div className="p-4 md:p-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl md:text-4xl font-black tracking-tighter">
           {ar.productsList.title}
         </h1>
         <Link href="/admin/products/new">
           <Button size="sm">{ar.productsList.newProduct}</Button>
         </Link>
+      </div>
+      <div className="flex items-center gap-3 mb-6">
+        <label className="text-sm font-bold text-on-surface-variant">{ar.productForm.category}:</label>
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="rounded-xl border border-outline-variant/60 bg-white px-3 py-1.5 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+        >
+          <option value="all">الكل ({products?.length ?? 0})</option>
+          {categories?.map((c: any) => {
+            const count = products?.filter((p: any) => p.categoryId === c._id).length ?? 0;
+            return (
+              <option key={c._id} value={c._id}>
+                {c.nameFr} ({count})
+              </option>
+            );
+          })}
+        </select>
+        {categoryFilter !== "all" && (
+          <button
+            onClick={() => setCategoryFilter("all")}
+            className="text-xs text-primary font-bold hover:underline"
+          >
+            إعادة التعيين
+          </button>
+        )}
       </div>
       <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 overflow-hidden overflow-x-auto">
         <table className="w-full text-sm min-w-[550px]">
@@ -85,7 +117,7 @@ export default function AdminProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {products?.map((p: any) => (
+            {filtered?.map((p: any) => (
               <tr key={p._id} className="border-b border-outline-variant hover:bg-surface-container-low">
                 <td className="p-4">
                   {p.images?.[0] ? (
@@ -124,7 +156,7 @@ export default function AdminProductsPage() {
             ))}
           </tbody>
         </table>
-        {products?.length === 0 && (
+        {filtered?.length === 0 && (
           <div className="p-12 text-center text-on-surface-variant">
             {ar.productsList.noProducts}
           </div>
