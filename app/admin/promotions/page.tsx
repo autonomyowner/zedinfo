@@ -237,11 +237,10 @@ CRITICAL QUALITY REQUIREMENTS:
 }
 
 export default function PromotionsPage() {
-  const products = useQuery(api.products.list, {}) ?? undefined;
-  const promotions = useQuery(api.promotions.list, {}) ?? undefined;
+  const products = useQuery(api.products.list, {});
+  const promotions = useQuery(api.promotions.list, {});
   const isLoading = products === undefined;
   const generateImage = useAction(api.promotionActions.generateImage);
-  const postToMeta = useAction(api.promotionActions.postToMeta);
   const removePromotion = useMutation(api.promotions.remove);
 
   const [selectedProductId, setSelectedProductId] = useState<string>("");
@@ -259,7 +258,6 @@ export default function PromotionsPage() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [generatedPromoId, setGeneratedPromoId] = useState<string | null>(null);
   const [lastCost, setLastCost] = useState<number | null>(null);
-  const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const totalCost = promotions?.reduce((sum, p) => sum + (p.costUsd || 0), 0) ?? 0;
@@ -312,24 +310,6 @@ export default function PromotionsPage() {
       setError(e.message || "Generation failed");
     } finally {
       setGenerating(false);
-    }
-  };
-
-  const handlePost = async (platform: "facebook" | "instagram" | "both") => {
-    if (!generatedPromoId || !selectedProduct) return;
-    setPosting(true);
-    setError(null);
-    try {
-      const caption = `${selectedProduct.nameFr} - ${selectedProduct.priceDzd} DZD\n${selectedProduct.brand}\n\n🛒 Disponible chez Zed Informatique`;
-      await postToMeta({
-        promoId: generatedPromoId as Id<"promotions">,
-        platform,
-        caption,
-      });
-    } catch (e: any) {
-      setError(e.message || "Posting failed");
-    } finally {
-      setPosting(false);
     }
   };
 
@@ -598,34 +578,9 @@ export default function PromotionsPage() {
                 <span className="material-symbols-outlined text-base">download</span>
                 {ar.promotions.download}
               </a>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  onClick={() => handlePost("facebook")}
-                  disabled={posting}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-base">share</span>
-                  {posting ? ar.promotions.posting : ar.promotions.postFacebook}
-                </button>
-                <button
-                  onClick={() => handlePost("instagram")}
-                  disabled={posting}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-sm hover:opacity-90 transition-all disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-base">photo_camera</span>
-                  {posting ? ar.promotions.posting : ar.promotions.postInstagram}
-                </button>
-                <button
-                  onClick={() => handlePost("both")}
-                  disabled={posting}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-900 transition-all disabled:opacity-50"
-                >
-                  <span className="material-symbols-outlined text-base">public</span>
-                  {posting ? ar.promotions.posting : ar.promotions.postBoth}
-                </button>
-                <span className="text-xs text-on-surface-variant opacity-70 ms-1">
-                  Nécessite les clés Meta API
-                </span>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-variant text-on-surface-variant text-sm">
+                <span className="material-symbols-outlined text-base">cloud_off</span>
+                Publication Facebook / Instagram bientôt disponible
               </div>
             </div>
           </div>
