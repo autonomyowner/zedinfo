@@ -47,6 +47,11 @@ export const ar = {
     status: "الحالة",
     noOrders: "لا توجد طلبات",
     all: "الكل",
+    changeStatus: "تغيير الحالة",
+    quickActions: "إجراءات سريعة",
+    viewItems: "عرض المنتجات",
+    hideItems: "إخفاء المنتجات",
+    phone: "الهاتف",
   },
 
   // Order detail
@@ -100,6 +105,7 @@ export const ar = {
     brand: "العلامة التجارية",
     price: "السعر",
     stock: "المخزون",
+    stockUpdated: "تم التحديث",
     edit: "تعديل",
     delete: "حذف",
     noProducts: "لا توجد منتجات بعد",

@@ -1,11 +1,62 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { formatDzd } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 import { ar } from "@/lib/admin-i18n";
+import type { Id } from "@/convex/_generated/dataModel";
+
+function InlineStock({ productId, value }: { productId: Id<"products">; value: number }) {
+  const [editing, setEditing] = useState(false);
+  const [stock, setStock] = useState(value);
+  const [saved, setSaved] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const update = useMutation(api.products.update);
+
+  useEffect(() => { setStock(value); }, [value]);
+  useEffect(() => { if (editing) inputRef.current?.select(); }, [editing]);
+
+  const save = async () => {
+    setEditing(false);
+    if (stock === value) return;
+    await update({ id: productId, patch: { stock } });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  };
+
+  if (editing) {
+    return (
+      <input
+        ref={inputRef}
+        type="number"
+        min={0}
+        value={stock}
+        onChange={(e) => setStock(Math.max(0, parseInt(e.target.value) || 0))}
+        onBlur={save}
+        onKeyDown={(e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { setStock(value); setEditing(false); } }}
+        className="w-16 text-end rounded-lg border border-primary/40 px-2 py-0.5 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/30"
+      />
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setEditing(true)}
+      className={`inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-sm font-bold transition-all hover:bg-primary/10 cursor-pointer ${value <= 3 ? "text-error" : ""}`}
+      title={ar.productsList.stock}
+    >
+      {value}
+      {saved ? (
+        <span className="material-symbols-outlined text-green-600 text-sm">check_circle</span>
+      ) : (
+        <span className="material-symbols-outlined text-on-surface-variant/50 text-xs">edit</span>
+      )}
+    </button>
+  );
+}
 
 export default function AdminProductsPage() {
   const products = useQuery(api.products.list, {});
@@ -51,9 +102,7 @@ export default function AdminProductsPage() {
                 </td>
                 <td className="p-4 text-end font-bold">{formatDzd(p.priceDzd)}</td>
                 <td className="p-4 text-end">
-                  <span className={p.stock <= 3 ? "text-error font-bold" : ""}>
-                    {p.stock}
-                  </span>
+                  <InlineStock productId={p._id} value={p.stock} />
                 </td>
                 <td className="p-4 text-end">
                   <Link
