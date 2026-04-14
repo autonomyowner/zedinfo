@@ -8,7 +8,7 @@ async function downloadImage(url) {
   const r = await fetch(url, {
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      "Referer": "https://wifidjelfa.com/",
+      "Referer": url.includes("unitech-dz.com") ? "https://unitech-dz.com/" : "https://wifidjelfa.com/",
     },
   });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -36,7 +36,7 @@ async function main() {
   const externalUrls = new Set();
   for (const p of products) {
     for (const img of p.images) {
-      if (img && img.includes("wifidjelfa.com") && !img.includes("placeholder")) {
+      if (img && !img.includes("convex.cloud") && !img.includes("convex.site") && !img.includes("placeholder")) {
         externalUrls.add(img);
       }
     }

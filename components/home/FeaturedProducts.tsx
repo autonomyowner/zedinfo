@@ -24,7 +24,8 @@ export function FeaturedProducts({
 }) {
   const products = useQuery(api.products.list, { featured: true, limit: 8 });
 
-  if (!products || products.length === 0) return null;
+  // products === undefined means still loading; [] means no featured products
+  if (products && products.length === 0) return null;
 
   return (
     <section className="bg-surface-container-low py-16 lg:py-24">
@@ -47,17 +48,34 @@ export function FeaturedProducts({
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
-          {products.map((p) => (
-            <ProductCard
-              key={p._id}
-              product={p}
-              locale={locale}
-              label={inStockLabel}
-              addLabel={addLabel}
-            />
-          ))}
-        </div>
+        {!products ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-surface rounded-2xl shadow-card ring-1 ring-outline-variant/40 overflow-hidden animate-pulse"
+              >
+                <div className="aspect-square bg-surface-container" />
+                <div className="p-4 space-y-3">
+                  <div className="h-4 bg-surface-container rounded w-3/4" />
+                  <div className="h-4 bg-surface-container rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+            {products.map((p) => (
+              <ProductCard
+                key={p._id}
+                product={p}
+                locale={locale}
+                label={inStockLabel}
+                addLabel={addLabel}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Mobile "View all" button */}
         <div className="flex sm:hidden justify-center mt-8">
