@@ -130,6 +130,8 @@ export default defineSchema({
     platform: v.optional(v.union(v.literal("facebook"), v.literal("instagram"), v.literal("both"))),
     postedAt: v.optional(v.number()),
     postId: v.optional(v.string()),
+    costUsd: v.optional(v.number()),
+    model: v.optional(v.string()),
     createdAt: v.number(),
   }).index("by_product", ["productId"]).index("by_createdAt", ["createdAt"]),
 

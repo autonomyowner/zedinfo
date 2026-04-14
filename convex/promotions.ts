@@ -43,6 +43,8 @@ export const save = internalMutation({
     imageStorageId: v.id("_storage"),
     imageUrl: v.string(),
     aspectRatio: v.string(),
+    costUsd: v.optional(v.number()),
+    model: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("promotions", {

@@ -10,7 +10,7 @@ export const generateImage = action({
     prompt: v.string(),
     aspectRatio: v.string(),
   },
-  handler: async (ctx, { productId, prompt, aspectRatio }): Promise<{ promoId: string; imageUrl: string }> => {
+  handler: async (ctx, { productId, prompt, aspectRatio }): Promise<{ promoId: string; imageUrl: string; costUsd: number }> => {
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) throw new Error("OPENROUTER_API_KEY not set");
 
@@ -75,6 +75,15 @@ export const generateImage = action({
 
     const data = await response.json();
     const message = data.choices?.[0]?.message;
+    const usedModel: string = data.model || "google/gemini-2.5-flash-image";
+
+    // Extract cost from OpenRouter usage
+    const totalTokens = data.usage?.total_tokens || 0;
+    const costUsd = data.usage?.total_cost
+      ?? (data.usage?.prompt_tokens_cost && data.usage?.completion_tokens_cost
+        ? data.usage.prompt_tokens_cost + data.usage.completion_tokens_cost
+        : undefined)
+      ?? (totalTokens > 0 ? totalTokens * 0.00001 : 0);
 
     // Extract image from response - OpenRouter returns images in message.images[]
     let imageBase64: string | null = null;
@@ -113,9 +122,11 @@ export const generateImage = action({
       imageStorageId: storageId,
       imageUrl,
       aspectRatio,
+      costUsd: typeof costUsd === "number" ? costUsd : undefined,
+      model: usedModel,
     });
 
-    return { promoId, imageUrl };
+    return { promoId, imageUrl, costUsd: typeof costUsd === "number" ? costUsd : 0 };
   },
 });
 

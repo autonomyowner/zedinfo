@@ -139,8 +139,11 @@ export default function PromotionsPage() {
   const [generating, setGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [generatedPromoId, setGeneratedPromoId] = useState<string | null>(null);
+  const [lastCost, setLastCost] = useState<number | null>(null);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const totalCost = promotions?.reduce((sum, p) => sum + (p.costUsd || 0), 0) ?? 0;
 
   const selectedProduct = products?.find((p) => p._id === selectedProductId);
 
@@ -184,6 +187,7 @@ export default function PromotionsPage() {
       });
       setGeneratedImage(result.imageUrl);
       setGeneratedPromoId(result.promoId as string);
+      setLastCost(result.costUsd ?? null);
     } catch (e: any) {
       setError(e.message || "Generation failed");
     } finally {
@@ -217,9 +221,21 @@ export default function PromotionsPage() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black text-on-surface">{ar.promotions.title}</h1>
-        <p className="text-sm text-on-surface-variant mt-1">{ar.promotions.subtitle}</p>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-on-surface">{ar.promotions.title}</h1>
+          <p className="text-sm text-on-surface-variant mt-1">{ar.promotions.subtitle}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 px-4 py-3 text-center">
+            <p className="text-xs text-on-surface-variant font-bold">Images générées</p>
+            <p className="text-lg font-black text-on-surface">{promotions?.length ?? 0}</p>
+          </div>
+          <div className="bg-white rounded-2xl shadow-card ring-1 ring-outline-variant/40 px-4 py-3 text-center">
+            <p className="text-xs text-on-surface-variant font-bold">Coût total</p>
+            <p className="text-lg font-black text-primary">${totalCost.toFixed(4)}</p>
+          </div>
+        </div>
       </div>
 
       {/* Generator Card */}
@@ -405,6 +421,14 @@ export default function PromotionsPage() {
         {/* Preview */}
         {generatedImage && (
           <div className="space-y-4">
+            {lastCost !== null && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-50 ring-1 ring-amber-200 text-sm">
+                <span className="material-symbols-outlined text-amber-600 text-base">paid</span>
+                <span className="text-amber-800">
+                  Coût de cette image : <strong>${lastCost.toFixed(4)}</strong> USD
+                </span>
+              </div>
+            )}
             <div className="rounded-2xl overflow-hidden ring-1 ring-outline-variant/40 bg-gray-100 flex items-center justify-center">
               <img
                 src={generatedImage}
@@ -473,10 +497,16 @@ export default function PromotionsPage() {
                   <p className="text-sm font-bold text-on-surface truncate">
                     {promo.product?.nameFr || "—"}
                   </p>
-                  <div className="flex items-center gap-2 text-xs text-on-surface-variant">
+                  <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-xs text-on-surface-variant">
                     <span>{promo.aspectRatio}</span>
                     <span>·</span>
                     <span>{new Date(promo.createdAt).toLocaleDateString("fr-DZ")}</span>
+                    {promo.costUsd != null && promo.costUsd > 0 && (
+                      <>
+                        <span>·</span>
+                        <span className="text-amber-600 font-bold">${promo.costUsd.toFixed(4)}</span>
+                      </>
+                    )}
                     {promo.postedAt && (
                       <>
                         <span>·</span>
