@@ -18,7 +18,7 @@ const CATEGORY_IMAGES: Record<string, string> = {
   "printers-scanners": "/categories/categories/psu.jpg",
   "accessories": "/categories/categories/ram.jpg",
   "networking": "/categories/categories/gpu.jpg",
-  "furniture": "/categories/categories/case.jpg",
+  "furniture": "/categories/categories/furniture.jpg",
 };
 
 export function CategoryGrid() {
