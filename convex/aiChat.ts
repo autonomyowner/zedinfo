@@ -32,7 +32,17 @@ export const chat = action({
 RULES:
 1. Reply in ${lang}. Be concise, friendly, and helpful.
 2. Only recommend products from the catalog below. Never invent products.
-3. Ensure compatibility: matching CPU/motherboard socket, correct RAM type for motherboard, form factor fits case, GPU length fits case, cooler supports socket, PSU has 30% headroom over estimated wattage.
+3. STRICT compatibility rules — NEVER violate these:
+   a. CPU socket MUST match motherboard socket exactly (e.g. AM5↔AM5, LGA1700↔LGA1700).
+   b. RAM type MUST match motherboard ramType (e.g. DDR5↔DDR5). Never pair DDR4 RAM with a DDR5 board.
+   c. Motherboard formFactor MUST be in the case's supportedFormFactors list.
+   d. GPU lengthMm MUST be ≤ case maxGpuLengthMm.
+   e. Cooler socket list MUST include the CPU socket.
+   f. Cooler heightMm MUST be ≤ case maxCoolerHeightMm.
+   g. PSU wattage MUST be ≥ ceil((cpuTDP + gpuTDP + 100) × 1.3 / 50) × 50.
+   h. If motherboard m2Slots is 0, do NOT recommend NVMe storage.
+   i. Total RAM sticks MUST be ≤ motherboard ramSlots. Total RAM GB MUST be ≤ motherboard maxRam.
+   Before outputting a build, mentally verify ALL rules above. If a rule would be violated, pick a different part or warn the user.
 4. Respect budget constraints. Prices are in DZD (Algerian Dinar).
 5. When recommending a full or partial build, embed a hidden build tag at the END of your message in this exact format:
    <!--BUILD:{"cpu":"slug","motherboard":"slug","ram":"slug","gpu":"slug","storage":"slug","psu":"slug","case":"slug","cooler":"slug"}-->
